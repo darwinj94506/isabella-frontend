@@ -1,0 +1,52 @@
+<div id="cabecera-botones">
+<br>
+  <button mat-flat-button color="primary" (click)="imprimir()">Imprimir</button>
+    <button mat-flat-button color="accent" (click)="onNoClick()">Cerrar</button>
+
+</div>
+<div id="container">
+
+   <div id="header">
+        
+        <div id="reference">
+            <img src="../../../../../assets/logo_mundibox.PNG" alt="">
+        </div>
+    </div>
+    
+    <br>
+
+
+    <table>
+    <tr>
+        <th  class="borde-derecho">DESTINATARIO:</th>
+        <th>REMITENTE:</th>
+    
+    </tr>
+    <tr>
+        <td class="borde-derecho">
+        <strong>NOMBRE:</strong><br>{{datosUsuario.nombres}} {{datosUsuario.apellidos}} 
+        <br><strong>CÉDULA:</strong><br>{{datosUsuario.cedula}}
+        <br><strong>TELÉFONO:</strong><br>{{datosUsuario.telefono}}
+        <br><strong>DIRECCIÓN:</strong><br>{{datosUsuario.direccion}}
+        <br><strong>REFERENCIA:</strong><br>{{datosUsuario.referencia}}
+        <br><strong>CIUDAD:</strong><br>{{datosUsuario.ciudad}}
+        </td>
+        <td>MUNDIBOX
+        <br>1803419595
+        <br>032422301/0992514223
+        <br><strong>Ambato</strong>
+        </td>
+    
+    </tr>
+    
+    <tr class="instrucciones">
+        <td><strong>Instrucciones Especiales:</strong></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="2" class="centrado negrita">FRAGIL<br> NO <br>APLASTAR</td>
+    </tr>
+    
+    
+    </table>
+</div>

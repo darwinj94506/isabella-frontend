@@ -1,0 +1,190 @@
+<div class="m-portlet" [ngClass]="{ 'm-portlet--body-progress' : viewLoading, 'm-portlet--body-progress-overlay' : loadingAfterSubmit }">
+
+    <form class="m-form">
+        <div class="m-portlet__body">
+
+            <div class="m-portlet__body-progress">
+                <mat-spinner [diameter]="20"></mat-spinner>
+            </div>
+            <!--
+			<m-alert *ngIf="hasFormErrors" type="warn" [duration]="30000" [showCloseButton]="true" (close)="onAlertClose($event)">
+				Error!! llene los datos correctamente
+			</m-alert>
+-->
+            <div class="form-group m-form__group row">
+                <div class="col-lg-8 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <input matInput placeholder="Ingrese el Código del fabricante" [formControl]="codigofabricante" />
+                        <mat-error>El código del fabricante es
+                            <strong>requerido</strong>
+                        </mat-error>
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>código del fabricante</strong>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class=" text-right col-lg-4 m--margin-bottom-20-mobile">
+                    <button type="button" mat-raised-button [mat-dialog-close]="data.animal" cdkFocusInitial matTooltip="Cancelar" (click)="onNoClick()">
+							Cancelar
+					</button>&nbsp;
+                    <button type="button" mat-raised-button color="primary" (click)="buscarProducto()" [disabled]="buscandoItem" matTooltip="Buscar">
+						Buscar Producto
+					</button>
+                </div>
+            </div>
+
+            <!--esta seccion se muestra si el producto a ingresar no existe en la bdd local -->
+            <div *ngIf="mostrarGuardarImportacionProducto">
+                <div class="m-separator m-separator--dashed"></div>
+                <div class="form-group m-form__group row">
+                    
+                   
+                    <div class="col-lg-12 m--margin-bottom-20-mobile">
+                        <mat-form-field class="mat-form-field-fluid">
+                            <input type="text" matInput placeholder="Producto" [formControl]="titulo" />
+                            <mat-hint align="start">
+                                <strong>Producto</strong>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="m-separator m-separator--dashed"></div>
+                <div class="form-group m-form__group row">
+                    <div class="col-lg-6 m--margin-bottom-20-mobile">
+                        <mat-form-field class="mat-form-field-fluid">
+                            <input type="text" matInput placeholder="Código fabricante" [formControl]="codigofabricante" />
+                            <mat-hint align="start">
+                                <strong>Código fabricante</strong>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-6 m--margin-bottom-20-mobile">
+                        <mat-form-field class="mat-form-field-fluid">
+                            <input type="number" matInput placeholder="Ingrese la cantidad" [formControl]="cantidad" />
+
+                            <mat-hint align="start">Por favor ingrese la
+                                <strong>cantidad</strong>
+                            </mat-hint>
+                            <mat-error *ngIf="cantidad.errors?.required">
+                                <strong>El código de fabricante es requerido</strong>
+                            </mat-error>
+                            <mat-error *ngIf="cantidad.errors?.min">
+                                <strong>No puede ser menor a 1</strong>
+                            </mat-error>
+
+                        </mat-form-field>
+                    </div>
+
+                </div>
+            </div>
+            <!--esta seccion se muestra si el producto a ingresar no existe en la bdd local -->
+            <div *ngIf="mostrarItemUpcDb">
+                <div class="m-separator m-separator--dashed"></div>
+                <div class="form-group m-form__group row">
+                    <div class="col-lg-6 m--margin-bottom-20-mobile">
+                        <mat-form-field class="mat-form-field-fluid">
+                            <input type="text" matInput [formControl]="tituloAE" />
+
+                            <mat-hint align="start">Título traído de
+                                <strong>upcitemdb.com</strong>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-6 m--margin-bottom-20-mobile">
+                        <mat-form-field class="mat-form-field-fluid">
+                            <input type="text" matInput [formControl]="tituloAET" />
+                            <mat-hint align="start">Título traducido con
+                                <strong>yandex.com</strong>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="m-separator m-separator--dashed"></div>
+                <div class="form-group m-form__group row">
+                    <div class="col-lg-6 m--margin-bottom-20-mobile">
+                        <mat-form-field class="mat-form-field-fluid">
+                            <textarea type="text" matInput [formControl]="descripcionAE"></textarea>
+                            <mat-hint align="start">Descripción traida de
+                                <strong>upcitemdb.com</strong>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-6 m--margin-bottom-20-mobile">
+                        <mat-form-field class="mat-form-field-fluid">
+                            <textarea type="text" matInput [formControl]="descripcionAET"></textarea>
+
+                            <mat-hint align="start">Descripción traducida con
+                                <strong>yandex.com</strong>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+                <div class="m-separator m-separator--dashed"></div>
+                <div class="form-group m-form__group row">
+                    <div class="col-lg-6 m--margin-bottom-20-mobile">
+                        <mat-form-field class="mat-form-field-fluid">
+                            <textarea type="text" matInput [formControl]="descripcionAlternativaAE"></textarea>
+                            <mat-hint align="start">Descripción alternativa formada con: título, marca, modelo, color, tamaño, dimensión, peso, traída de
+                                <strong>upcitemdb.com</strong>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-6 m--margin-bottom-20-mobile">
+                        <mat-form-field class="mat-form-field-fluid">
+                            <textarea type="text" matInput [formControl]="descripcionAlternativaAET"></textarea>
+
+                            <mat-hint align="start">Descripción alternativa traducida con
+                                <strong>yandex.com</strong>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div *ngIf="mostrarGuardarImportacionProducto" class="m-portlet__foot m-portlet__no-border m-portlet__foot--fit">
+            <div class="m-form__actions m-form__actions--solid">
+                <div class="row text-right">
+                    <div class="col-lg-12">
+                        <button type="button" mat-raised-button [mat-dialog-close]="data.animal" cdkFocusInitial matTooltip="Cancelar cambios" (click)="onNoClick()">
+							Cancelar
+						</button>&nbsp;
+                        <button type="button" mat-raised-button color="primary" (click)="save()" [disabled]="viewLoading" matTooltip="Guada cambios">
+							Guardar
+						</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="mostrarItemUpcDb" class="m-portlet__foot m-portlet__no-border m-portlet__foot--fit">
+            <div class="m-form__actions m-form__actions--solid">
+                <div class="row">
+                    <div class="col-lg-9 text-left">
+                        <div class="row" [formGroup]="imagenesForm">
+                            <a formArrayName="imagenesElegidas" class="thumbnail" data-big="http://placekitten.com/460/700" *ngFor="let imagen of imagenesForm.controls.imagenesElegidas.controls;let i=index">
+                                <div class="col thumbnail-image" #img [style.background-image]="'url('+ItemUPCItemDb.images[i]+')'">
+                                    <input type="checkbox" [formControlName]="i" name="image[]" value="" />
+                                    <img class="oculto" #img [src]="ItemUPCItemDb.images[i]">    
+                                </div>
+                                <label [innerHTML]="img.naturalWidth"></label>x
+                                <label [innerHTML]="img.naturalHeight"></label>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 text-right">
+                        <button type="button" mat-raised-button [mat-dialog-close]="data.animal" cdkFocusInitial matTooltip="Cancelar cambios">
+							Cancelar
+						</button>&nbsp;
+                        <button type="button" mat-raised-button color="primary" (click)="guardarProductoBddLocal()" [disabled]="viewLoading" matTooltip="Guardar Cambios">
+							Crear producto
+						</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>

@@ -1,0 +1,30 @@
+table {
+    width: 100%;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+td,
+th {
+    width: 50%;
+   justify-content: center
+}
+@media screen and (max-width: 700px){
+    td,th{
+    font-size:10px;
+   
+    }
+  }
+
+.nuevo-pointer{
+cursor: pointer;
+}
+@media screen and (max-width: 700px){
+    h1{
+    font-size:14px;
+   
+    }
+  }

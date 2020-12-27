@@ -1,0 +1,139 @@
+<!-- ******************************* inicio de ingreso de productos ****************************************-->
+<m-portlet>
+    <ng-container mPortletHeadTitle>
+        <div class="row m-form">
+            <div class="col-md-12 m--margin-bottom-10-mobile">
+                <mat-form-field class="mat-form-field-fluid">
+                    <input matInput placeholder="Código de fabricante" #searchInput/>
+                    <mat-error *ngIf="noExisteProducto">
+                        <strong>No existe este producto</strong>
+                    </mat-error>
+                    <mat-hint align="start">Ingrese el
+                        <strong>código de fabricante</strong>
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+    </ng-container>
+
+
+    <ng-container mPortletBody>
+        <div class="rojo" *ngIf="noExisteProducto">
+            No existe este producto
+        </div>
+
+        <div class="m-form__section m-form__section--first">
+            <div class="m-form__group">
+
+                <br>
+                <!--solo se muestra cuando hay productos-->
+                <div *ngIf="ELEMENT_DATA.length>0">
+                    <div mat-elevation-z8>
+                        <!--prueba-->
+                        <mat-table #table [dataSource]="dataSource">
+                            <!-- Position Column -->
+                            <ng-container matColumnDef="posicion">
+                                <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
+                                <mat-cell *matCellDef="let element; let i=index;"> {{i+1}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="codigo">
+                                <mat-header-cell *matHeaderCellDef>Producto</mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                    {{element.codigo}}
+                                </mat-cell>
+                            </ng-container>
+                            <!-- Fav Column 
+                            <ng-container matColumnDef="material">
+                              <mat-header-cell *matHeaderCellDef> Producto</mat-header-cell> 
+                              <mat-cell *matCellDef="let element; let i=index;">
+                                <mat-form-field floatLabel="never">
+                                    <mat-select placeholder="Producto" (openedChange)="abrirSelect($event,i)"  name="idproducto"
+                                      (selectionChange)="verificarCambio($event,i)" [(ngModel)]="element.idproducto" required #idproducto="ngModel">
+                                        <mat-option *ngFor="let material of materiales"
+                                        [value]="material.idproducto">{{material.idproducto}}
+                                        </mat-option>
+                                    </mat-select>
+                                     <mat-error *ngIf="idproducto.invalid && idproducto.errors.required">Campo obligatorio</mat-error>
+                      
+                                </mat-form-field>
+                              </mat-cell>
+                            </ng-container> 
+                                Name Column -->
+                            <ng-container matColumnDef="cantidad">
+                                <mat-header-cell *matHeaderCellDef> Cantidad </mat-header-cell>
+                                <mat-cell *matCellDef="let element; let i=index;">
+                                    <mat-form-field floatLabel="never">
+                                        <input matInput type="number" placeholder="Cantidad" (ngModelChange)="calcularTotal($event,i,2)" [(ngModel)]="element.cantidad" required>
+                                        <!-- <mat-error *ngIf="i.errors?.min">Debe ser maror a cero</mat-error>
+                                        <mat-error *ngIf="i.errors?.required">Campo obligatorio</mat-error> -->
+                                    </mat-form-field>
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="precio">
+                                <mat-header-cell *matHeaderCellDef> Precio </mat-header-cell>
+                                <mat-cell *matCellDef="let element;let i=index;">
+                                    <mat-select placeholder="precio" name="precio" (selectionChange)="calcularTotal($event,i,1)" [(ngModel)]="element.precio" required>
+                                        <mat-option [value]="element.precio1">${{ element.precio1 }} - Precio 1
+                                        </mat-option>
+                                        <mat-option [value]="element.precio2">${{ element.precio2 }} - Precio 2
+                                        </mat-option>
+                                        <mat-option [value]="element.precio3">${{ element.precio3 }} - Precio 3
+                                        </mat-option>
+                                        <mat-option [value]="element.preciomec">${{ element.preciomec }} - Precio ML
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="total">
+                                <mat-header-cell *matHeaderCellDef> Total </mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                    <mat-form-field floatLabel="never">
+                                        <span matSuffix>$&nbsp;</span>
+                                        <input matInput type="number" placeholder="Total" name="total" [(ngModel)]="element.total" required [disabled]="true">
+                                        <!-- <mat-error *ngIf="cantidad.min">Debe ser mayor a cero</mat-error>               -->
+                                    </mat-form-field>
+                                </mat-cell>
+                            </ng-container>
+                            <!--
+                              <ng-container matColumnDef="star" stickyEnd >
+                                <th class="nuevo-pointer" mat-header-cell *matHeaderCellDef 
+                                (click)="agregar()"><mat-icon class="md-48">add</mat-icon></th>
+                                <td mat-cell *matCellDef="let element; let i=index;">
+                                  <button mat-icon-button (click)="eliminar(element,i)">
+                                    <mat-icon>delete_outline</mat-icon>
+                                  </button>
+                                </td>  
+                              </ng-container>
+                              -->
+                            <ng-container matColumnDef="actions">
+                                <mat-header-cell *matHeaderCellDef>
+                                    Acciones
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element; let i=index;">
+
+                                    <button mat-icon-button color="warn" type="button" (click)="eliminar(element,i)" matTooltip="Eliminar item">
+                                    <mat-icon>delete</mat-icon>
+                                  </button>&nbsp;
+                                </mat-cell>
+                            </ng-container>
+
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        </mat-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- </form>-->
+        <!--end::Form-->
+    </ng-container>
+</m-portlet>
+
+
+
+
+
+<!-- ******************************* fin de inicio de productos                      <input [(ngModel)]="element.codigo" matInput placeholder="Producto" />
+********************************************-->

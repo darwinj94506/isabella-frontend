@@ -1,0 +1,93 @@
+//usuario 1 vendedor 2 publicaciones de muñecas mohanada datos iguaes
+{
+    
+   "id": 415773688,
+    "nickname": "TEST9W7VGAJZ",
+   
+   "password": "qatest4270",
+  
+   "site_status": "active",
+  
+   "email": "test_user_65362058@testuser.com"
+
+}
+
+
+//usuario 2 
+
+{
+    
+     "id": 415773814,
+    
+     "nickname": "TESTKFT6R3XE",
+    
+     "password": "qatest310",
+    
+     "site_status": "active",
+    
+     "email": "test_user_91526918@testuser.com"
+}
+
+
+//usuario 3
+{
+    "id": 415774679,
+    
+     "nickname": "TESTJNVGSEX0",
+    
+     "password": "qatest1745",
+    
+     "site_status": "active",
+    
+     "email": "test_user_4933484@testuser.com"
+
+}
+
+//accsess token
+APP_USR-146821082450527-031319-e1dfb06df440bb2c979a6ed7843d71ba-294045280
+
+
+
+{
+    "id": "MEC1132",
+    "name": "Juegos y Juguetes"
+ },
+
+{
+    "id": "MEC1953",
+    "name": "Otras categorías"
+  }
+
+
+
+
+CREATE OR REPLACE VIEW public.producto_stock AS
+ SELECT ( SELECT utiles.nulo_entero(sum(t_1.cantidad)::integer) AS ingreso
+           FROM ( SELECT ip.cantidad,
+                    ip.idproducto
+                   FROM importacion_producto ip) t_1
+          WHERE t_1.idproducto = p.idproducto) AS _stock,
+    p.idproducto,
+    p.codigo,
+    p.descripcion,
+    p.precio1,
+    p.precio2,
+    p.precio3,
+    p.precio4,
+    p.costo,
+    p.codigofabricante,
+    p.impuestoventas,
+    p.impuestocompras,
+    p.situacion,
+    p.preciofacturar,
+    p._createddate,
+    p._updateddate,
+    p._isdeleted
+   FROM producto p
+  ORDER BY p.codigo;
+
+
+https://auth.mercadolibre.com.ec/authorization?response_type=code&client_id=146821082450527&redirect_uri=http://localhost:3002/api/subidaMasiva
+
+
+

@@ -1,0 +1,207 @@
+<!-- <div class="invoice" *ngFor="let invoice of invoiceIds; let i = index">
+  <h1>Invoice Num. {{ invoice }}</h1>
+  Amount: {{ (invoiceDetails[i] | async)?.amount }}
+</div> -->
+
+<div id="container">
+    <div id="header">
+        <div id="logo">
+            <img src="http://placehold.it/230x70&text=logo" alt="">
+        </div>
+        <div id="reference">
+            <h3><strong>Factura</strong></h3>
+            <h4>N° : 1</h4>
+            <p>Fecha de facturación : 20/03/2017</p>
+        </div>
+    </div>
+
+    <div id="fromto">
+        <div id="from">
+            <p>
+                <strong>Mundibox</strong><br> 8 avenue des Champs Elysées
+                <br> 75000 Ambato <br><br> Tel.: 032422301 / 0992514223 <br> Email: contact@website.com <br> Web: www.mundibox.com
+            </p>
+        </div>
+        <div id="to">
+            <p>
+                <strong>Nombre</strong><br> Darwin Guailla<br>
+                <strong>Cédula</strong><br> 1600666026 <br>
+                <strong>Dirección</strong>
+                <br> Latacunga
+            </p>
+        </div>
+    </div>
+
+    <div id="items">
+        <p>Montants exprimés en Euros</p>
+        <table>
+            <tr>
+                <th>Artículo</th>
+                <th>Iva</th>
+                <th>P.U</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Article</td>
+                <td>20%</td>
+                <td>3,99</td>
+                <td>1</td>
+                <td>3,99</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="summary">
+        <div id="note">
+            <h4>Note :</h4>
+            <p>Information complémentaire à ajouter.</p>
+        </div>
+        <div id="total">
+            <table border="1">
+                <tr>
+                    <td>SubTotal</td>
+                    <td>3,99</td>
+                </tr>
+                <tr>
+                    <td>Total TVA 20%</td>
+                    <td>0,80</td>
+                </tr>
+                <tr>
+                    <td>Total TTC</td>
+                    <td>4,79</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="footer">
+        <p>Société à responsabilité limité (SARL) - Capital de 1 000 000 € - SIRET: 87564738493127 <br> NAF-APE: 6202A - Num. TVA: FR28987856541</p>
+    </div>
+</div>

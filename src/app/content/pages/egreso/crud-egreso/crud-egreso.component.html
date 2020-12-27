@@ -1,0 +1,97 @@
+<div [ngClass]="{ 'disabled-div' : loading$ | async}">
+    <m-portlet>
+        <ng-container mPortletHeadTitle>
+            <!--
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    Factura
+                </h3>
+            </div>-->
+            <div class="m-form row">
+                <div class="col-md-12 m--margin-bottom-10-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <input matInput type="text" placeholder="Ingrese la Cédula" #cedula (keyup.enter)="buscarUsuario(cedula.value)">
+                        <mat-hint align="start">Presione enter para buscar
+                        <mat-error *ngIf="clienteNull">
+                            <strong>No existe este usuario</strong>
+                        </mat-error>
+                        
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container mPortletHeadTools>
+            <div>
+                <div class="m-buttons--wrapper">
+                    <button type="button" routerLink="/egreso" mat-raised-button matTooltip="Regresar a lista de facturas">Atrás</button>&nbsp;
+                    <button type="button" (click)="guardarFactura()" mat-raised-button color="primary" matTooltip="Guardar y Continuar">Guardar</button>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container mPortletBody  class="m-portlet__body">
+            <!--begin::Form-->
+            <form [formGroup]="myForm" class="m-form m-form--group-seperator-dashed">
+                <div class="m-form__section m-form__section--first">
+                    <div class="m-form__group">
+
+                        <div class="row">
+                            <div class="col-md-4 m--margin-bottom-10-mobile">
+                                <mat-form-field class="mat-form-field-fluid">
+                                    <input matInput type="text" placeholder="Cliente" formControlName="nombresSolicitante">
+                                    <mat-hint align="start">Por favor ingrese un
+                                        <strong>cliente</strong>
+                                    </mat-hint>
+                                    <mat-error class="error-message" *ngIf="myForm.get('nombresSolicitante').hasError('required')
+                            && (myForm.get('nombresSolicitante').dirty || myForm.get('nombresSolicitante').touched)">
+                                        El usuario es obligatorio</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-2 m--margin-bottom-10-mobile">
+                                <mat-form-field class="mat-form-field-fluid">
+                                    <span matSuffix>%&nbsp;</span>
+                                    <input matInput type="number" placeholder="Iva" formControlName="iva">
+                                    <mat-hint align="start">Por favor ingrese el
+                                        <strong>iva</strong>
+                                    </mat-hint>
+                                    <mat-error class="error-message" *ngIf="myForm.get('iva').hasError('required')
+                            && (myForm.get('iva').dirty || myForm.get('iva').touched)">
+                                        El iva es obligatorio</mat-error>
+
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-3 m--margin-bottom-10-mobile">
+                                <mat-form-field class="mat-form-field-fluid">
+                                <span matSuffix>$&nbsp;</span>
+                                    <input matInput type="number" placeholder="SubTotal" formControlName="subTotal">
+                                    <mat-hint align="start">
+                                        <strong>SubTotal</strong>
+                                    </mat-hint>
+                                    
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-md-3 m--margin-bottom-10-mobile">
+                                <mat-form-field class="mat-form-field-fluid">
+                                    <span matSuffix>$&nbsp;</span>
+                                    <input matInput type="number" placeholder="Total" formControlName="total">
+                                    <mat-hint align="start">
+                                        <strong>Total</strong>
+                                    </mat-hint>
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+            <!--end::Form-->
+
+
+        </ng-container>
+    </m-portlet>
+    <div>
+        <app-detalle (OutputProductos)="recibirProductos($event)"></app-detalle>
+    </div>
+    
+</div>

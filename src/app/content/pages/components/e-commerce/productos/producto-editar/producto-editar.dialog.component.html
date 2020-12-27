@@ -1,0 +1,219 @@
+<div class="m-portlet" [ngClass]="{ 'm-portlet--body-progress' : viewLoading, 'm-portlet--body-progress-overlay' : loadingAfterSubmit }">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <span class="m-portlet__head-icon m--hide">
+					<i class="la la-gear"></i>
+				</span>
+                <h3 class="m-portlet__head-text">{{getTitle()}}</h3>
+            </div>
+        </div>
+    </div>
+    <form class="m-form" [formGroup]="productoForm">
+        <div class="m-portlet__body">
+
+            <div class="m-portlet__body-progress">
+                <mat-spinner [diameter]="20"></mat-spinner>
+            </div>
+
+            <m-alert *ngIf="hasFormErrors" type="warn" [duration]="30000" [showCloseButton]="true" (close)="onAlertClose($event)">
+                Por favor corrija los errores y vuelva a intentarlo.
+            </m-alert>
+
+            <div class="form-group m-form__group row">
+                <div class="col-lg-6 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <textarea matInput placeholder="Ingrese el título" formControlName="titulo"></textarea>
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>título</strong>
+                        </mat-hint>
+                        <mat-error *ngIf="f.titulo.errors?.required">
+                            <strong>El títuo es requerido</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.titulo.errors?.maxlength">
+                            <strong><br>Máximo 54 caracteres</strong>
+                        </mat-error>
+                         
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <textarea matInput placeholder="Ingrese la Descripción" formControlName="descripcion"></textarea>
+                        <mat-hint align="start">Por favor ingrese la
+                            <strong>descripción</strong>
+                        </mat-hint>
+                        <mat-error *ngIf="f.descripcion.errors?.required">
+                            <strong>La descripción es requerida</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.descripcion.errors?.maxlength">
+                            <strong><br>Máximo 255 caracteres</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="m-separator m-separator--dashed"></div>
+            <div class="form-group m-form__group row">
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <mat-select placeholder="Ingrese la categoría" formControlName="idtipo">
+                            <mat-option [value]="cat.idtipo" *ngFor="let cat of categorias">{{cat.nombre}}</mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <strong>La categoría es requerida</strong>
+                        </mat-error>
+                        <mat-hint align="start">Por favor ingrese la
+                            <strong>categoría</strong>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <input matInput placeholder="Ingrese código de fabricante" formControlName="codigofabricante" />
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>código de fabricante</strong>
+                        </mat-hint>
+                        <mat-error *ngIf="f.codigofabricante.errors?.required">
+                            <strong>El código de fabricante es requerido</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.codigofabricante.errors?.maxlength">
+                            <strong><br>Máximo 20 caracteres</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.codigofabricante.errors?.pattern">
+                            <strong><br>Solo se permiten números</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <span matPrefix>$&nbsp; </span>
+                        <input type="number" matInput placeholder="Ingrese el costo" formControlName="costo" />
+                        
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>costo</strong>
+                        </mat-hint>
+                         <mat-error *ngIf="f.costo.errors?.required">
+                            <strong>El costo es requerido</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.costo.errors?.min">
+                            <strong>No puede ser menor que 1</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.costo.errors?.max">
+                            <strong>No puede ser menor que 100</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <input type="number" matInput placeholder="Ingrese el Precio 1" formControlName="precio1" #precio1/>
+                        <span matSuffix>%</span>
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>precio 1. &nbsp;<label style="color: #FF0000" *ngIf="valorPrecio1">${{valorPrecio1}}</label></strong>
+                        </mat-hint>
+                        <mat-error *ngIf="f.precio1.errors?.required">
+                            <strong>El precio 1 es requerido</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.precio1.errors?.min">
+                            <strong>No puede ser menor que 1</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.precio1.errors?.max">
+                            <strong>No puede ser mayor que 100</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="m-separator m-separator--dashed"></div>
+            <div class="form-group m-form__group row">
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <input type="number" matInput placeholder="Ingrese el Precio 2" formControlName="precio2" #precio2 />
+                        <span matSuffix>%</span>
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>precio 2. &nbsp;<label style="color: #FF0000" *ngIf="valorPrecio2">${{valorPrecio2}}</label></strong>
+                        </mat-hint>
+                        <mat-error *ngIf="f.precio2.errors?.required">
+                            <strong>El precio 2 es requerido</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.precio2.errors?.min">
+                            <strong>No puede ser menor que 1</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.precio2.errors?.max">
+                            <strong>No puede ser mayor que 100</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <input type="number" matInput placeholder="Ingrese el Precio 3" formControlName="precio3" #precio3/>
+                        <span matSuffix>%&nbsp; </span>
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>precio 3. &nbsp;<label style="color: #FF0000" *ngIf="valorPrecio3">${{valorPrecio3}}</label></strong>
+                        </mat-hint>
+                        <mat-error *ngIf="f.precio3.errors?.required">
+                            <strong>El precio 3 es requerido</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.precio3.errors?.min">
+                            <strong>No puede ser menor que 1</strong>
+                        </mat-error>
+                         <mat-error *ngIf="f.precio3.errors?.max">
+                            <strong>No puede ser mayor que 100</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <mat-select placeholder="Ingrese el precio a facturar" formControlName="preciofacturar">
+                            <mat-option [value]="p.id" *ngFor="let p of precios;">Precio {{p.id}}</mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <strong>El Precio a facturar es requerido</strong>
+                        </mat-error>
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>precio a facturar</strong>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <mat-select placeholder="Ingrese el precio de mercado libre" formControlName="preciomercadolibre">
+                            <mat-option [value]="p.id" *ngFor="let p of precios;">Precio {{p.id}}</mat-option>
+                        </mat-select>
+                        <mat-error>El precio de mercado libre es
+                            <strong>requerido</strong>
+                        </mat-error>
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>precio de mercado libre</strong>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="m-separator m-separator--dashed"></div>
+            <div class="form-group m-form__group row">
+                <div class="col-lg-12 m--margin-bottom-20-mobile">
+                    <!-- <button mat-raised-button color="accent" (click)="abrilModalImagenes()">Imágenes</button> [uploadedFiles]="['http://images.jet.com/md5/17f657de81048e27353504d05fc81f23.500']"  (imageUploaded)="imageUploadedResponse($event)" -->
+                    <image-upload [max]="10" [buttonCaption]="'Seleccione las imágenes'" (uploadFinished)="onUploadFinished($event)" [url]="url_imagenes" (removed)="onRemoved($event)" [dropBoxMessage]="'Arrastre las imagenes aquí'"
+                        [uploadedFiles]="producto.imagenes">
+                    </image-upload>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="m-portlet__foot m-portlet__no-border m-portlet__foot--fit">
+            <div class="m-form__actions m-form__actions--solid">
+                <div class="row text-right">
+                    <div class="col-lg-12">
+                        <button type="button" mat-raised-button [mat-dialog-close]="data.animal" cdkFocusInitial matTooltip="Cancelar cambios">
+							Cancelar
+						</button>&nbsp;
+                        <button type="button" mat-raised-button color="primary" (click)="onSubmit()" [disabled]="viewLoading" matTooltip="Guardar cambios">
+							Guardar
+						</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>

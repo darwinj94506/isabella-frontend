@@ -1,0 +1,10 @@
+/* propiedades para el formulario de usuario,la propiedad clave no se muestra cuando el rol es cliente ya que este
+ no tiene acceso al sistema */
+
+.oculto {
+    display: none;
+}
+
+.visible {
+    display: block;
+}

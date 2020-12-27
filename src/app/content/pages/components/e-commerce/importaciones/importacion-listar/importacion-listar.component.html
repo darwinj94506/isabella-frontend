@@ -1,0 +1,189 @@
+<m-portlet [options]="{headLarge: true}" [loading$]="dataSource.loading$">
+	<!-- start::Header (attributtes: mPortletHeadTitle|mPortletHeadTools) -->
+	<ng-container mPortletHeadTitle>
+		<div class="m-portlet__head-title">
+			<h3 class="m-portlet__head-text">
+				Importaciones
+			</h3>
+		</div>
+	</ng-container>
+	<ng-container mPortletHeadTools>
+		<a [routerLink]="['/products/add']" mat-raised-button color="primary" matTooltip="Crear nueva importación">Nueva Importación</a>
+	</ng-container>
+	<!-- end::Header -->
+	
+	<!-- start::Body (attribute: mPortletBody) -->
+	<ng-container mPortletBody>
+		<!-- start::FILTERS & GROUP ACTIONS -->
+		<div class="m-form">
+			<!-- start::FILTERS
+			<div class="m-form__filtration">
+				<div class="row align-items-center">
+					<div class="col-md-2 m--margin-bottom-10-mobile">
+
+						<div class="m-form__control">
+							<mat-form-field>
+								<mat-select [(value)]="filterStatus" (selectionChange)="loadProductsList()" class="mat-form-field mat-form-field-fluid">
+									<mat-option value="">Todas</mat-option>
+									<mat-option value="0">Publicadas</mat-option>
+									<mat-option value="1">En espera</mat-option>
+								</mat-select>
+								<mat-hint align="start">
+									<strong>Filtrar por estado</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
+
+					</div>
+					<div class="col-md-2 m--margin-bottom-10-mobile">
+
+						<div class="m-form__control">
+							<mat-form-field>
+								<mat-select [(value)]="filterCondition" (selectionChange)="loadProductsList()" class="mat-form-field mat-form-field-fluid">
+									<mat-option value="">All</mat-option>
+									<mat-option value="0">New</mat-option>
+									<mat-option value="1">Used</mat-option>
+								</mat-select>
+								<mat-hint align="start">
+									<strong>Filter by Contidion</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
+
+						<div class="d-md-none m--margin-bottom-10"></div>
+					</div>
+					<div class="col-md-4 m--margin-bottom-10-mobile">
+						<mat-form-field>
+							<input matInput placeholder="Search product" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
+							<mat-hint align="start">
+								<strong>Buscar en todos los campos</strong>
+							</mat-hint>
+						</mat-form-field>
+					</div>
+				</div>
+			</div>
+			end::FILTERS -->
+
+			<!-- start::GROUP ACTIONS -->
+			<!-- Group actions list: 'Delete selected' | 'Fetch selected' | 'Update status for selected' -->
+			<!-- Group actions are shared for all LISTS | See '../../_shared' folder -->
+			<!--
+
+			
+			<div class="row align-items-center collapse m-form__group-actions m--margin-top-20 m--margin-bottom-20" [ngClass]="{'show' : selection.selected.length > 0}">
+				<div class="col-xl-12">
+					<div class="m-form__group m-form__group--inline">
+						<div class="m-form__label m-form__label-no-wrap">
+							<label class="m--font-bold m--font-danger-">Registros Selecionados: {{ selection.selected.length }}</label>
+						</div>
+						<div class="m-form__control m-form__group--inline">
+							<button mat-raised-button color="accent" (click)="deleteProducts()" matTooltip="Eliminar seleccionados">
+								<mat-icon>Eliminar</mat-icon> Eliminar Todo
+							</button>&nbsp;
+							<button mat-raised-button (click)="fetchProducts()" matTooltip="Fetch selected products">
+								<mat-icon>clear_all</mat-icon> Fetch Selected Records
+							</button>&nbsp;
+							<button mat-raised-button (click)="updateStatusForProducts()" matTooltip="Update status for selected products">
+								<mat-icon>Actualizar</mat-icon> Actualizar Estado
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			-->
+			<!-- end::GROUP ACTIONS -->
+		</div>
+		<!-- end::FILTERS & GROUP ACTIONS -->
+
+		<!-- MATERIAL TABLE | Binded to datasources -->
+		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
+		<div class="mat-table__wrapper">
+			<!-- Checkbox Column -->
+			<!-- Table with selection -->
+			<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
+			<mat-table class="lmat-elevation-z8" [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
+				<!-- Checkbox Column 
+				<ng-container matColumnDef="select">
+					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
+						<mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+						</mat-checkbox>
+					</mat-header-cell>
+					<mat-cell *matCellDef="let row" class="mat-column-checkbox">
+						<mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+						</mat-checkbox>
+					</mat-cell>
+				</ng-container>
+				-->
+				<ng-container matColumnDef="idimportacion">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-vinCode">Número</mat-header-cell>
+					<mat-cell *matCellDef="let importacion" class="mat-column-vinCode">{{importacion.idimportacion}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="fecha">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Importación</mat-header-cell>
+					<mat-cell *matCellDef="let importacion">{{importacion.fecha | date :'mediumDate'}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="numerodocumento">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Factura/liquidación</mat-header-cell>
+					<mat-cell *matCellDef="let importacion">{{importacion.numerodocumento}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="usuario">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Ingresado por</mat-header-cell>
+					<mat-cell *matCellDef="let importacion">{{importacion.nombres}} {{importacion.apellidos}}</mat-cell>
+				</ng-container>
+<!--
+				<ng-container matColumnDef="estado">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+					<mat-cell *matCellDef="let importacion">
+					<span class="m-badge m-badge--{{ getItemCssClassByStatus(importacion.estado) }} m-badge--wide">{{ getItemStatusString(importacion.estado) }}</span>
+					</mat-cell>
+				</ng-container>
+
+-->
+				
+
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>
+						Acciones
+					</mat-header-cell>
+					<mat-cell *matCellDef="let importacion">
+						<a [routerLink]="['/products/edit']" [queryParams]="{id: importacion.idimportacion}" mat-icon-button color="primary" matTooltip="Editar Importación">
+							<mat-icon>create</mat-icon>
+						</a>&nbsp;
+						<button mat-icon-button color="warn" type="button" (click)="deleteProduct(importacion)" matTooltip="Eliminar Importación">
+							<mat-icon>delete</mat-icon>
+						</button>&nbsp;<!--
+						<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Más Acciones">
+							<mat-icon>more_vert</mat-icon>
+						</button>
+						<mat-menu #menu="matMenu">
+							<button mat-menu-item type="button">
+								<mat-icon>subject</mat-icon>
+								<span>Remarks</span>
+							</button>
+							<button mat-menu-item type="button">
+								<mat-icon>assignment</mat-icon>
+								<span>Specifications</span>
+							</button>
+						</mat-menu>-->
+					</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No se encontraron registros</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 50, 100]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</ng-container>
+	<!-- end::Body -->
+</m-portlet>

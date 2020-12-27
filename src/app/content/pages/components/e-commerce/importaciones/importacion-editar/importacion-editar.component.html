@@ -1,0 +1,100 @@
+<m-portlet [options]="{headLarge: true, enableSticky: true}" [loading$]="loading$">
+
+	<ng-container mPortletHeadTitle>
+		<div class="m-portlet__head-title">
+			<h3 class="m-portlet__head-text">
+				{{ getComponentTitle() }}
+			</h3>
+		</div>
+	</ng-container>
+	<ng-container mPortletHeadTools>
+		<button type="button" (click)="goBack()" mat-raised-button matTooltip="Regresar a la lista de importaciones">Atrás</button>&nbsp;
+		<!--<button mat-raised-button (click)="reset()" [disabled]="selectedTab !== 0" matTooltip="Reset changes">Resetear</button>&nbsp;-->
+
+		<div class="m-buttons--wrapper">
+			<button type="button" (click)="onSumbit(false)" mat-raised-button color="primary" matTooltip="Guardar y continuar">Guardar</button>
+			<button mat-icon-button [matMenuTriggerFor]="menu" color="primary" >
+				<mat-icon>more_vert</mat-icon>
+			</button>
+			<mat-menu #menu="matMenu">
+				<button mat-menu-item color="primary" (click)="onSumbit(true)">Save & Exit</button>
+				<button mat-menu-item color="primary">Save & Duplicate</button>
+				<button mat-menu-item color="primary" (click)="onSumbit(false)">Save & Continue</button>
+			</mat-menu>
+		</div>
+	</ng-container>
+	<ng-container mPortletBody>
+		<mat-tab-group [(selectedIndex)]="selectedTab" *ngIf="importacion">
+			<mat-tab label="Información Básica">
+				<ng-template matTabContent>
+					<!--begin::Form-->
+					<form [formGroup]="importacionForm" class="m-form m-form--group-seperator-dashed">
+
+						<m-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+							Por favor corrija los errores y vuelva a intentarlo 
+						</m-alert>
+
+						<div class="m-form__section m-form__section--first">
+
+							<div class="m-form__group">
+								<div class="row">
+									<div class="col-md-6 m--margin-bottom-10-mobile">
+										
+										<mat-form-field class="mat-form-field-fluid">
+											<input matInput [matDatepicker]="picker" placeholder="Ingrese la fecha de importación" formControlName="fecha" />
+											<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+											<mat-datepicker #picker></mat-datepicker>
+											<mat-hint align="start">Por favor ingrese la
+												<strong>fecha de importación</strong>
+											</mat-hint>
+											<mat-error *ngIf="f.fecha.errors?.required">
+												<strong>La fecha es requerida</strong>
+											</mat-error>
+										</mat-form-field>
+									</div>
+									<div class="col-md-6 m--margin-bottom-10-mobile">
+										
+										<mat-form-field class="mat-form-field-fluid">
+											<input matInput placeholder="Número de documento" formControlName="numerodocumento" />
+											<mat-hint align="start">Por favor ingrese la
+												<strong>factura o liquidación</strong>
+											</mat-hint>
+											<mat-error *ngIf="f.numerodocumento.errors?.required">
+												<strong>Los nombres son requeridos</strong>
+											</mat-error>
+											<mat-error *ngIf="f.numerodocumento.errors?.maxlength">
+												<strong>Máximo 50 caracteres</strong>
+											</mat-error>
+										</mat-form-field>
+									</div>													
+								</div>
+								<div class="row">
+									<div class="col-md-12 m--margin-bottom-10-mobile">
+										<mat-form-field class="mat-form-field-fluid">
+											<input matInput placeholder="Descripción" formControlName="descripcion">											
+											<mat-hint align="start">Por favor ingrese una
+												<strong>descripción</strong>
+											</mat-hint>
+											<mat-error *ngIf="f.descripcion.errors?.maxlength">
+												<strong>Máximo 255 caracteres</strong>
+											</mat-error>
+										</mat-form-field>
+									</div>								
+								</div>
+
+							</div>							
+						</div>
+					</form>
+					<!--end::Form-->
+				</ng-template>
+			</mat-tab>
+			
+			<mat-tab label="Productos" [disabled]="!importacion.idimportacion">
+				<ng-template matTabContent>
+					<!--<m-specifications-list [specsListState]="productosListState" [(loadingSubject)]="loadingSubject"></m-specifications-list>-->
+					<m-importacion-producto-listar [idimportacion]="importacion.idimportacion" [(loadingSubject)]="loadingSubject"></m-importacion-producto-listar>
+				</ng-template>
+			</mat-tab>
+		</mat-tab-group>
+	</ng-container>
+</m-portlet>

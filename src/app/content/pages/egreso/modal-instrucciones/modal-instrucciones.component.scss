@@ -1,0 +1,109 @@
+#cabecera-botones {
+    // display: flex;
+    // flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 0;
+    padding: 0 2.2rem;
+    height: 5.1rem;
+    position: relative;
+}
+
+button {
+    padding: 5px;
+    border: 3px;
+}
+
+table {
+    border: 1px solid #000;
+    text-align: left;
+}
+
+.centrado {
+    text-align: center;
+    padding: 20px;
+    font-size: 80px;
+    color: red;
+}
+
+.negrita {
+    font-weight: 900;
+}
+
+.instrucciones {
+    border: 1px solid #000;
+    background-color: #F6CF0A;
+}
+
+@media print {
+    #container {
+        -webkit-print-color-adjust: exact;
+    }
+    #cabecera-botones {
+        display: none;
+    }
+}
+
+#header {
+    height: 80px
+}
+
+#header>#reference {
+    float: right;
+    text-align: right
+}
+
+#header>#reference h3 {
+    margin: 0
+}
+
+#header>#reference h4 {
+    margin: 0;
+    font-size: 85%;
+    font-weight: 600
+}
+
+#header>#reference p {
+    margin: 0;
+    margin-top: 2%;
+    font-size: 85%
+}
+
+#header>#logo {
+    // width: 50%;
+    width: 100px;
+    height: 30px;
+    float: left
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.borde-derecho {
+    border-right: 1px solid #000;
+}
+
+th,
+td {
+    padding: 10px;
+    font-size: 20px;
+}
+
+body {
+    height: 840px;
+    width: 592px;
+    margin: auto;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px
+}
+
+section {
+    display: block
+}
+
+#container {
+    position: relative;
+    padding: 8%;
+}

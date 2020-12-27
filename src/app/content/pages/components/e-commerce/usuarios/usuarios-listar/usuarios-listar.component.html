@@ -1,0 +1,153 @@
+<m-portlet [options]="{headLarge: true}" [loading$]="dataSource.loading$">
+	<!-- start::Header (attributtes: mPortletHeadTitle|mPortletHeadTools) -->
+	<ng-container mPortletHeadTitle>
+		<div class="m-portlet__head-title">
+			<h3 class="m-portlet__head-text">
+				Usuarios
+			</h3>
+		</div>
+	</ng-container>
+	<ng-container mPortletHeadTools>
+		<a (click)="addCustomer()" mat-raised-button color="primary" matTooltip="Crear nuevo usuario">Nuevo Usuario</a>
+	</ng-container>
+	<!-- end::Header -->
+	
+	<!-- start::Body (attribute: mPortletBody) -->
+	<ng-container mPortletBody>
+		<!-- start::FILTERS & GROUP ACTIONS 
+		<div class="m-form">
+			
+			<div class="m-form__filtration">
+				<div class="row align-items-center">
+					<div class="col-md-2 m--margin-bottom-10-mobile">
+
+						<div class="m-form__control">
+							<mat-form-field>
+								<mat-select [(value)]="filterStatus" (selectionChange)="loadProductsList()" class="mat-form-field mat-form-field-fluid">
+									<mat-option value="">Todas</mat-option>
+									<mat-option value="0">Publicadas</mat-option>
+									<mat-option value="1">En espera</mat-option>
+								</mat-select>
+								<mat-hint align="start">
+									<strong>Filtrar por estado</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
+
+					</div>
+					<div class="col-md-2 m--margin-bottom-10-mobile">
+
+						<div class="m-form__control">
+							<mat-form-field>
+								<mat-select [(value)]="filterCondition" (selectionChange)="loadProductsList()" class="mat-form-field mat-form-field-fluid">
+									<mat-option value="">All</mat-option>
+									<mat-option value="0">New</mat-option>
+									<mat-option value="1">Used</mat-option>
+								</mat-select>
+								<mat-hint align="start">
+									<strong>Filter by Contidion</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
+
+						<div class="d-md-none m--margin-bottom-10"></div>
+					</div>
+					<div class="col-md-4 m--margin-bottom-10-mobile">
+						<mat-form-field>
+							<input matInput placeholder="Search product" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
+							<mat-hint align="start">
+								<strong>Buscar en todos los campos</strong>
+							</mat-hint>
+						</mat-form-field>
+					</div>
+				</div>
+			</div>
+	
+			
+		</div>
+		 end::FILTERS & GROUP ACTIONS -->
+
+		<!-- MATERIAL TABLE | Binded to datasources -->
+		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
+		<div class="mat-table__wrapper">
+			<!-- Checkbox Column -->
+			<!-- Table with selection -->
+			<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
+			<mat-table class="lmat-elevation-z8" [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
+			
+				<ng-container matColumnDef="nombres">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-vinCode">Nombres</mat-header-cell>
+					<mat-cell *matCellDef="let usuario" class="mat-column-vinCode">{{usuario.nombres}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="apellidos">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Apellidos</mat-header-cell>
+					<mat-cell *matCellDef="let usuario">{{usuario.apellidos}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="cedula">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Cédula</mat-header-cell>
+					<mat-cell *matCellDef="let usuario">{{usuario.cedula}}</mat-cell>
+				</ng-container>
+        <ng-container matColumnDef="rol">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Rol</mat-header-cell>
+					<mat-cell *matCellDef="let usuario">
+						<label *ngIf="usuario.rol===1">Administrador</label>
+						<label *ngIf="usuario.rol===2">Empleado</label>
+						<label *ngIf="usuario.rol===3">Cliente</label>
+					</mat-cell>
+				</ng-container>
+<!--
+				<ng-container matColumnDef="estado">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+					<mat-cell *matCellDef="let usuario">
+					<span class="m-badge m-badge--{{ getItemCssClassByStatus(usuario.estado) }} m-badge--wide">{{ getItemStatusString(usuario.estado) }}</span>
+					</mat-cell>
+				</ng-container>
+
+-->
+				
+			  <ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>
+						Acciones
+					</mat-header-cell>
+					<mat-cell *matCellDef="let usuario">
+						<a (click)="editCustomer(usuario)" mat-icon-button color="primary" matTooltip="Editar usuario">
+							<mat-icon>create</mat-icon>
+						</a>&nbsp;
+						<button mat-icon-button color="warn" type="button" (click)="deleteCustomer(usuario)" matTooltip="Eliminar usuario">
+							<mat-icon>delete</mat-icon>
+						</button>&nbsp;<!--
+						<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Más Acciones">
+							<mat-icon>more_vert</mat-icon>
+						</button>
+						<mat-menu #menu="matMenu">
+							<button mat-menu-item type="button">
+								<mat-icon>subject</mat-icon>
+								<span>Remarks</span>
+							</button>
+							<button mat-menu-item type="button">
+								<mat-icon>assignment</mat-icon>
+								<span>Specifications</span>
+							</button>
+						</mat-menu>
+						-->
+					</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No se encontraron registros</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 50, 100]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</ng-container>
+	<!-- end::Body -->
+</m-portlet>
