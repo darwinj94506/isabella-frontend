@@ -44,71 +44,31 @@ export class LoginComponent implements OnInit, OnDestroy {
 		private cdr: ChangeDetectorRef
 	) {}
 	//login
-	public identity;
-    public token;
     public status:string;
 
 	submit() {
 		this.spinner.active = true;
 		if (this.validate(this.f)) {
-			console.log(this.model);
 			this.authService.signup(this.model).subscribe(response => {
-				this.identity=response.user;
-				if (!this.identity || !this.identity.idusuario) {
-					console.log("logueado correctamente")
+				console.log(response);
+				let identity = response.user;
+				if (!identity || !response.token) {
+					alert(response.message);
 				} else{
-					this.identity.clave='';
-					//mostrar el identity
-					localStorage.setItem('identity',JSON.stringify(this.identity));
-					//conseguir el token
-					this.authService.signup(this.model,'true').subscribe(
-					  response=>{
-						this.token=response.token;
-						if(this.token.length<=0 ){
-							alert("Error!!, el token no se ha generado corrctamente");
-						//   this.cargando=false;
-						this.spinner.active = false;
-
-						}else{//mostrar el token
-						//   this.cargando=false;
-						this.spinner.active = false;
-						console.log("deberia ingresar");
-						  localStorage.setItem('token',this.token);
-						  this.router.navigate(['/']);
-						}
-					  },
-					  error=>{
-						  alert("Error en la solicitud del token")
-						console.log(<any>error);
-						// this.cargando=false;
-						this.spinner.active = false;
-
-					  }
-					);
+					localStorage.setItem('identity',JSON.stringify(identity));
+					localStorage.setItem('token',response.token);
+					this.router.navigate(['/']);
 				  }
 				this.spinner.active = false;
 				this.cdr.detectChanges();
 			},error=>{
 				this.spinner.active = false;
 				this.authNoticeService.setNotice(this.translate.instant('AUTH.VALIDATION.INVALID_LOGIN'), 'error');
-				alert("Error en la solicitud");
+				alert(error.message);
 			});
 		}
 	}
-	// submit() {
-	// 	this.spinner.active = true;
-	// 	if (this.validate(this.f)) {
-	// 		this.authService.login(this.model).subscribe(response => {
-	// 			if (typeof response !== 'undefined') {
-	// 				this.router.navigate(['/']);
-	// 			} else {
-	// 				this.authNoticeService.setNotice(this.translate.instant('AUTH.VALIDATION.INVALID_LOGIN'), 'error');
-	// 			}
-	// 			this.spinner.active = false;
-	// 			this.cdr.detectChanges();
-	// 		});
-	// 	}
-	// }
+
 
 	ngOnInit(): void {
 		// demo message to show
