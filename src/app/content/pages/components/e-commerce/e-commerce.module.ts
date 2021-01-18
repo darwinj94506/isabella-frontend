@@ -81,6 +81,7 @@ import { UsuariosEditarComponent } from './usuarios/usuarios-editar/usuarios-edi
 import { CategoriaListarComponent } from './categorias/categoria-listar/categoria-listar.component';
 import { CategoriaEditarComponent } from './categorias/categoria-editar/categoria-editar.component';
 import { CategoriaService } from './_core/services';
+// import { ModalProductsComponent } from './_shared/modal-products/modal-products.component';
 
 const routes: Routes = [
 	{
@@ -243,7 +244,8 @@ const routes: Routes = [
 		UsuariosListarComponent,
 		UsuariosEditarComponent,
 		CategoriaListarComponent,
-		CategoriaEditarComponent
+		CategoriaEditarComponent,
+		// ModalProductsComponent	
 	]
 })
 export class ECommerceModule { }

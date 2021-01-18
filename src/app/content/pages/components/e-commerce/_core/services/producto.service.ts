@@ -35,6 +35,11 @@ export class ProductoService {
 		return this.http.post<any>(URL_GLOBAL+'crudProducto', {...producto,opcion:opcion}, { headers: httpHeaders});
 	}
 
+	subidaMasivaProductos(productos: any[]): Observable<any> {
+		const httpHeaders = this.httpUtils.getHTTPHeaders();
+		return this.http.post<any>(URL_GLOBAL+'subidaMasivaProductos', {data:[...productos]}, { headers: httpHeaders});
+	}
+
 	
 	findProductos(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
 		const httpHeaders = this.httpUtils.getHTTPHeaders();

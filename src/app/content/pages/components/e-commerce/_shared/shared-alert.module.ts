@@ -17,7 +17,7 @@ import { DeleteEntityDialogComponent } from './delete-entity-dialog/delete-entit
 import { FetchEntityDialogComponent } from './fetch-entity-dialog/fetch-entity-dialog.component';
 import { UpdateStatusDialogComponent } from './update-status-dialog/update-status-dialog.component';
 import { AlertComponent } from './alert/alert.component';
-
+import { ModalProductsComponent } from './modal-products/modal-products.component';
 // Material
 import {
 	MatInputModule,
@@ -96,7 +96,8 @@ import {
 		ActionNotificationComponent,
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
-        UpdateStatusDialogComponent
+		UpdateStatusDialogComponent,
+		ModalProductsComponent
         
     ],
     exports:[
@@ -104,7 +105,8 @@ import {
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
         UpdateStatusDialogComponent,
-        AlertComponent
+		AlertComponent,
+		ModalProductsComponent
     ],
 	declarations: [
 		// Shared
@@ -113,6 +115,7 @@ import {
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
 		AlertComponent,
+		ModalProductsComponent
 	
 	]
 })

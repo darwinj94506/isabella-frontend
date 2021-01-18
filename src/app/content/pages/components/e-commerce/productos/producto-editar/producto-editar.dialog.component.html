@@ -21,7 +21,7 @@
             </m-alert>
 
             <div class="form-group m-form__group row">
-                <div class="col-lg-6 m--margin-bottom-20-mobile">
+                <!-- <div class="col-lg-6 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
                         <textarea matInput placeholder="Ingrese el título" formControlName="titulo"></textarea>
                         <mat-hint align="start">Por favor ingrese el
@@ -35,8 +35,21 @@
                         </mat-error>
                          
                     </mat-form-field>
+                </div> -->
+                <div class="col-lg-4 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <mat-select placeholder="Ingrese la categoría" formControlName="idtipo">
+                            <mat-option [value]="cat.idtipo" *ngFor="let cat of categorias">{{cat.nombre}}</mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <strong>La categoría es requerida</strong>
+                        </mat-error>
+                        <mat-hint align="start">Por favor ingrese la
+                            <strong>categoría</strong>
+                        </mat-hint>
+                    </mat-form-field>
                 </div>
-                <div class="col-lg-6 m--margin-bottom-20-mobile">
+                <div class="col-lg-8 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
                         <textarea matInput placeholder="Ingrese la Descripción" formControlName="descripcion"></textarea>
                         <mat-hint align="start">Por favor ingrese la
@@ -54,7 +67,7 @@
 
             <div class="m-separator m-separator--dashed"></div>
             <div class="form-group m-form__group row">
-                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                <!-- <div class="col-lg-3 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
                         <mat-select placeholder="Ingrese la categoría" formControlName="idtipo">
                             <mat-option [value]="cat.idtipo" *ngFor="let cat of categorias">{{cat.nombre}}</mat-option>
@@ -66,8 +79,8 @@
                             <strong>categoría</strong>
                         </mat-hint>
                     </mat-form-field>
-                </div>
-                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                </div> -->
+                <div class="col-lg-4 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
                         <input matInput placeholder="Ingrese código de fabricante" formControlName="codigofabricante" />
                         <mat-hint align="start">Por favor ingrese el
@@ -84,7 +97,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                <div class="col-lg-4 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
                         <span matPrefix>$&nbsp; </span>
                         <input type="number" matInput placeholder="Ingrese el costo" formControlName="costo" />
@@ -96,19 +109,19 @@
                             <strong>El costo es requerido</strong>
                         </mat-error>
                          <mat-error *ngIf="f.costo.errors?.min">
-                            <strong>No puede ser menor que 1</strong>
+                            <strong>No puede ser menor que 0</strong>
                         </mat-error>
                          <mat-error *ngIf="f.costo.errors?.max">
                             <strong>No puede ser menor que 100</strong>
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                <div class="col-lg-4 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
-                        <input type="number" matInput placeholder="Ingrese el Precio 1" formControlName="precio1" #precio1/>
+                        <input type="number" matInput placeholder="Ingrese el Precio" formControlName="precio1" #precio1/>
                         <span matSuffix>%</span>
                         <mat-hint align="start">Por favor ingrese el
-                            <strong>precio 1. &nbsp;<label style="color: #FF0000" *ngIf="valorPrecio1">${{valorPrecio1}}</label></strong>
+                            <strong>precio 1. &nbsp;<label style="color: #ff4800" *ngIf="valorPrecio1">${{valorPrecio1}}</label></strong>
                         </mat-hint>
                         <mat-error *ngIf="f.precio1.errors?.required">
                             <strong>El precio 1 es requerido</strong>
@@ -122,7 +135,7 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div class="m-separator m-separator--dashed"></div>
+            <!-- <div class="m-separator m-separator--dashed"></div>
             <div class="form-group m-form__group row">
                 <div class="col-lg-3 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
@@ -191,12 +204,11 @@
             <div class="m-separator m-separator--dashed"></div>
             <div class="form-group m-form__group row">
                 <div class="col-lg-12 m--margin-bottom-20-mobile">
-                    <!-- <button mat-raised-button color="accent" (click)="abrilModalImagenes()">Imágenes</button> [uploadedFiles]="['http://images.jet.com/md5/17f657de81048e27353504d05fc81f23.500']"  (imageUploaded)="imageUploadedResponse($event)" -->
                     <image-upload [max]="10" [buttonCaption]="'Seleccione las imágenes'" (uploadFinished)="onUploadFinished($event)" [url]="url_imagenes" (removed)="onRemoved($event)" [dropBoxMessage]="'Arrastre las imagenes aquí'"
                         [uploadedFiles]="producto.imagenes">
                     </image-upload>
                 </div>
-            </div>
+            </div> -->
 
 
         </div>

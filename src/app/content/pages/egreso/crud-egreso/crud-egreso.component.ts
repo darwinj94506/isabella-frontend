@@ -21,21 +21,10 @@ export class CrudEgresoComponent implements OnInit  {
   // Loading
 	loadingSubject = new BehaviorSubject<boolean>(false);
 	loading$: Observable<boolean>;
-  
-  // displayedColumns = ['position', 'producto', 'cantidad','precio','total','star'];
- 
-  // @Input() estado: boolean=false;
-  // @Output() enviarEstado = new EventEmitter();
-  // verificarDetalle:boolean=false;
   idEgreso;
-  // cabeceraFactura:any;
-  // estadoEgreso=false;
-  // numero:number=0;
-  // usuarios:any[]=[];
   //son los productos que se van a  facturar
   itemsProductos:any[]=[];
   myForm: FormGroup; 
-  // myFormDetalle: FormGroup; 
   //
   //se utiliza para guardar las respuestas cuando se hace una peticion con concatmap para obtener el stock de los productos guardados
   respItemstock:any[]=[];
@@ -71,26 +60,6 @@ export class CrudEgresoComponent implements OnInit  {
     return roundedTempNumber / factor;
   };
 
-  // enviarOrdenDeVerificaionDetalle(){
-  //   if(this.myForm.get('idsolicitante').value===null){
-  //     const _title: string = 'Advertencia';
-  //     const _description: string = 'Esta factura se guardará como consumidor final';
-  //     const _waitDesciption: string = 'Creando factura...';
-  //     // const _deleteMessage = 'Productos subidos con éxito!';
-  //     const dialogRef = this.layoutUtilsService.deleteElement(_title, _description, _waitDesciption);
-  //     dialogRef.afterClosed().subscribe(res => {
-  //       if (!res) {
-  //         this.loadingAfterSubmit=false;
-  //         this.viewLoading = false;
-  //         return;
-  //       }
-  //       this.verificarDetalle=true;
-  //     })
-  //   }else{
-  //     this.verificarDetalle=true;
-  //   }
-  // }
-
   // para comprobar el stock, si en el detalle de la factura hay un mismo producto en varios filas, hay que agruparlas en una sola y sumar sus cantidades
   agruparProductos(){
     let arrayProd:Element[]=[];
@@ -111,7 +80,6 @@ export class CrudEgresoComponent implements OnInit  {
   guardarFactura(){
     this.loadingSubject.next(true);
     this.viewLoading=true;
-  
     // si se comprueba que el cuerpo de la factura es correcto, se envia a guardar la cabecera
     if(!this.verificacionVacio()){
       this._egreso.validarDetalle(this.agruparProductos()).subscribe((data)=>{
@@ -130,8 +98,8 @@ export class CrudEgresoComponent implements OnInit  {
               if (!res) {
                 return;
               }
-              //cuando no llena el campo de usuarios, se guarda el egreso como consumidor final, el id de consumidor final es el que esta guardado en la bdd, en este caso 3 
-              this.myForm.patchValue({idsolicitante:3});
+              //cuando no llena el campo de usuarios, se guarda el egreso como consumidor final, el id de consumidor final es el que esta guardado en la bdd, en este caso 2 
+              this.myForm.patchValue({idsolicitante:2});
               this.crudCabecera()
             })
             
@@ -182,42 +150,11 @@ crudDetalle(){
     this.viewLoading=false;
     this.loadingSubject.next(false);
     console.log(data);
+    this.abrirFactura(this.idEgreso);
     },error=>{
       this.loadingSubject.next(false);
       this.viewLoading=false;
       alert("Error Al guardar el detalle_egreso");
-    },()=>{
-      let respuestaActualizarStock:any[]=[];
-      //una vez guardados los items de la factura, se debe hacer una consulta del producto con su stock para actualizar el stock de mercado libre
-      this.productoService.findProductosByCodigoFabricante(this.agruparProductos()).subscribe(resp=>{
-        // console.log(resp);
-        this.respItemstock.push(resp) //agrupa los productos con su stock que vienen en la consulta
-        this.loadingSubject.next(false);
-        },error=>{
-          this.loadingSubject.next(false);
-          this.viewLoading=false;
-          alert("Error al consultar el stock actual del producto")
-          // console.log(error);
-        },()=>{
-          console.log(this.respItemstock);
-          //con los productos que se facturaron y ya con su stock actualizado, se envia a actualizar el stok en mercado libre
-          this._mec.actualizarStock(this.respItemstock).subscribe(res=>{
-            respuestaActualizarStock.push(res);
-            this.viewLoading=false;
-            this.loadingSubject.next(false);
-            // console.log(res);
-          },error=>{
-            this.loadingSubject.next(false);
-            this.viewLoading=false;
-            alert("Error al actualizar el stock en mercado libre");
-            // console.log(error);
-          },()=>{
-            this.loadingSubject.next(false);
-            this.viewLoading=false;
-            console.log(this.idEgreso);
-            this.abrirFactura(this.idEgreso);
-          })
-        })  
     })
 }
 
@@ -283,7 +220,7 @@ abrirModal(data=null){
 //esto viene del componente detalle cada vez que se agrega un producto
   recibirProductos(productos){
     console.log(productos);
-    var subTotal:number=this.round((productos.total)-(productos.total*0.12),2);
+    var subTotal:number=this.round((productos.total)-(productos.total*0.12),3);
     this.myForm.patchValue({total:productos.total,subTotal:subTotal})
     this.itemsProductos=productos.productos;
   }

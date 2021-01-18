@@ -3,8 +3,8 @@ import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy } fro
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, MatSnackBar, MatDialog } from '@angular/material';
 // RXJS
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
-import { fromEvent, merge, forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap, concatMap} from 'rxjs/operators';
+import { fromEvent, merge, forkJoin, from } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 // Services
 import { ProductoService } from '../../_core/services/index';
@@ -16,16 +16,22 @@ import { ProductoModel } from '../../_core/models/producto.model';
 import { ProductoDataSource } from '../../_core/models/data-sources/producto.datasource';
 // Components
 import { ProductoEditarDialogComponent } from '../producto-editar/producto-editar.dialog.component';
+import { ModalProductsComponent } from '../../_shared/modal-products/modal-products.component';
+import * as XLSX from "xlsx";
+
+type AOA = any[][];
 
 @Component({
 	selector: 'm-producto-listar',
 	templateUrl: './producto-listar.component.html',
+	styleUrls: ['./producto-listar.css'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductoListarComponent implements OnInit {
+
 	// Table fields
 	dataSource: ProductoDataSource;
-	displayedColumns = ['codigo', 'titulo', 'codigofabricante', '_stock', 'actions'];
+	displayedColumns = ['codigo', 'descripcion', 'codigofabricante', '_stock', 'actions'];
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
 	// Filter fields
@@ -34,14 +40,21 @@ export class ProductoListarComponent implements OnInit {
 	filterType: string = '';
 	// Selection
 	selection = new SelectionModel<ProductoModel>(true, []);
-	customersResult: ProductoModel[] = [];
+	products: ProductoModel[] = [];
+	viewLoading: boolean = false;
+	loadingAfterSubmit: boolean = false;
+
+	data: AOA = [[1, 2], [3, 4]];
+	wopts: XLSX.WritingOptions = { bookType: "xlsx", type: "array" };
+	fileName: string = "SheetJS.xlsx";
 
 	constructor(
 		private productoService: ProductoService,
 		public dialog: MatDialog,
 		public snackBar: MatSnackBar,
 		private layoutUtilsService: LayoutUtilsService,
-		private translate: TranslateService
+		private translate: TranslateService,
+		// private productoService: ProductoService,
 	) {}
 
 	/** LOAD DATA */
@@ -51,7 +64,7 @@ export class ProductoListarComponent implements OnInit {
 		merge(this.sort.sortChange, this.paginator.page)
 			.pipe(
 				tap(() => {
-					this.loadCustomersList();
+					this.load();
 				})
 			)
 			.subscribe();
@@ -64,7 +77,7 @@ export class ProductoListarComponent implements OnInit {
 		// 		distinctUntilChanged(), // This operator will eliminate duplicate values
 		// 		tap(() => {
 		// 			this.paginator.pageIndex = 0;
-		// 			this.loadCustomersList();
+		// 			this.load();
 		// 		})
 		// 	)
 		// 	.subscribe();
@@ -73,12 +86,12 @@ export class ProductoListarComponent implements OnInit {
 		const queryParams = new QueryParamsModel(this.filterConfiguration(false));
 		this.dataSource = new ProductoDataSource(this.productoService);
 		// First load
-		this.dataSource.loadCustomers(queryParams);
-		this.dataSource.entitySubject.subscribe(res => (this.customersResult = res));
+		this.dataSource.load(queryParams);
+		this.dataSource.entitySubject.subscribe(res => (this.products = res));
 
 	}
 
-	loadCustomersList() {
+	load() {
 		this.selection.clear();
 		const queryParams = new QueryParamsModel(
 			this.filterConfiguration(true),
@@ -87,7 +100,7 @@ export class ProductoListarComponent implements OnInit {
 			this.paginator.pageIndex,
 			this.paginator.pageSize
 		);
-		this.dataSource.loadCustomers(queryParams);
+		this.dataSource.load(queryParams);
 		this.selection.clear();
 	}
 
@@ -133,7 +146,7 @@ export class ProductoListarComponent implements OnInit {
 
 	 		this.productoService.crudProducto(_item,3).subscribe((res) => {
 	 			this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
-	 			this.loadCustomersList();
+	 			this.load();
 	 		},err=>{
 				alert("Ha ocurrido un error, por favor vuelva a intentarlo");
 
@@ -141,90 +154,15 @@ export class ProductoListarComponent implements OnInit {
 	 	});
 	 }
 
-	// deleteCustomers() {
-	// 	const _title: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_MULTY.TITLE');
-	// 	const _description: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_MULTY.DESCRIPTION');
-	// 	const _waitDesciption: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_MULTY.WAIT_DESCRIPTION');
-	// 	const _deleteMessage = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_MULTY.MESSAGE');
-
-	// 	const dialogRef = this.layoutUtilsService.deleteElement(_title, _description, _waitDesciption);
-	// 	dialogRef.afterClosed().subscribe(res => {
-	// 		if (!res) {
-	// 			return;
-	// 		}
-
-	// 		const idsForDeletion: number[] = [];
-	// 		for (let i = 0; i < this.selection.selected.length; i++) {
-	// 			idsForDeletion.push(this.selection.selected[i].id);
-	// 		}
-	// 		this.productoService
-	// 			.deleteCustomers(idsForDeletion)
-	// 			.subscribe(() => {
-	// 				this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
-	// 				this.loadCustomersList();
-	// 				this.selection.clear();
-	// 			});
-	// 	});
-	// }
-
-	/** Fetch */
-	// fetchCustomers() {
-	// 	const messages = [];
-	// 	this.selection.selected.forEach(elem => {
-	// 		messages.push({
-	// 			text: `${elem.lastName}, ${elem.firstName}`,
-	// 			id: elem.id.toString(),
-	// 			status: elem.status
-	// 		});
-	// 	});
-	// 	this.layoutUtilsService.fetchElements(messages);
-	// }
-
-	/** Update Status */
-	// updateStatusForCustomers() {
-	// 	const _title = this.translate.instant('ECOMMERCE.CUSTOMERS.UPDATE_STATUS.TITLE');
-	// 	const _updateMessage = this.translate.instant('ECOMMERCE.CUSTOMERS.UPDATE_STATUS.MESSAGE');
-	// 	const _statuses = [{ value: 0, text: 'Suspended' }, { value: 1, text: 'Active' }, { value: 2, text: 'Pending' }];
-	// 	const _messages = [];
-
-	// 	this.selection.selected.forEach(elem => {
-	// 		_messages.push({
-	// 			text: `${elem.lastName}, ${elem.firstName}`,
-	// 			id: elem.id.toString(),
-	// 			status: elem.status,
-	// 			statusTitle: this.getItemStatusString(elem.status),
-	// 			statusCssClass: this.getItemCssClassByStatus(elem.status)
-	// 		});
-	// 	});
-
-	// 	const dialogRef = this.layoutUtilsService.updateStatusForCustomers(_title, _statuses, _messages);
-	// 	dialogRef.afterClosed().subscribe(res => {
-	// 		if (!res) {
-	// 			this.selection.clear();
-	// 			return;
-	// 		}
-
-	// 		this.productoService
-	// 			.updateStatusForCustomer(this.selection.selected, +res)
-	// 			.subscribe(() => {
-	// 				this.layoutUtilsService.showActionNotification(_updateMessage, MessageType.Update);
-	// 				this.loadCustomersList();
-	// 				this.selection.clear();
-	// 			});
-	// 	});
-	// }
-
-	addCustomer() {
-		const newCustomer = new ProductoModel();
-		newCustomer.clear(); // Set all defaults fields
-		this.editCustomer(newCustomer);
+	add() {
+		const newProduct = new ProductoModel();
+		newProduct.clear(); // Set all defaults fields
+		this.edit(newProduct);
 	}
 	
 
 	/** Edit */
-	editCustomer(producto: ProductoModel) {
-		// let saveMessageTranslateParam = '';
-		// saveMessageTranslateParam += producto.idproducto > 0 ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
+	edit(producto: ProductoModel) {
 		const _saveMessage =  producto.idproducto > 0 ? 'PRODUCTO ACTUALIZADO CORRECTAMENTE' : 'PRODUCTO CREADO CORRECTAMENTE';
 		const _messageType = producto.idproducto > 0 ? MessageType.Update : MessageType.Create;
 		const dialogRef = this.dialog.open(ProductoEditarDialogComponent, { data: { producto },
@@ -236,22 +174,22 @@ export class ProductoListarComponent implements OnInit {
 			}
 
 			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType, 10000, true, false);
-			this.loadCustomersList();
+			this.load();
 		});
 	}
 
 	/** SELECTION */
 	isAllSelected(): boolean {
 		const numSelected = this.selection.selected.length;
-		const numRows = this.customersResult.length;
+		const numRows = this.products.length;
 		return numSelected === numRows;
 	}
 
 	masterToggle() {
-		if (this.selection.selected.length === this.customersResult.length) {
+		if (this.selection.selected.length === this.products.length) {
 			this.selection.clear();
 		} else {
-			this.customersResult.forEach(row => this.selection.select(row));
+			this.products.forEach(row => this.selection.select(row));
 		}
 	}
 
@@ -301,5 +239,120 @@ export class ProductoListarComponent implements OnInit {
 		}
 		return '';
 	}
+
+	onFileChange(evt: any) {
+		let count = 1;
+		/* wire up file reader */
+		const target: DataTransfer = <DataTransfer>evt.target;
+		if (target.files.length !== 1) throw new Error("Cannot use multiple files");
+		const reader: FileReader = new FileReader();
+		reader.onload = (e: any) => {
+		  /* read workbook */
+		  const bstr: string = e.target.result;
+		  const wb: XLSX.WorkBook = XLSX.read(bstr, { type: "binary" });
+	
+		  /* grab first sheet */
+		  const wsname: string = wb.SheetNames[0];
+		  const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+	
+		  /* save data */
+		  this.data = <AOA>XLSX.utils.sheet_to_json(ws, { header: 1 });
+		  let array = [];
+		  this.data.map((i, index) => {
+			if (index != 0 && i[0]!=undefined) 
+			{
+				let producto = {
+					descripcion: i[0],
+					precio1: this.round(this.calculoRentabilidad(i[2], i[1]),4),
+					codigofabricante: i[3],
+					idtipo: parseInt(i[4], 10),
+					costo: this.round(i[1],2),
+					iva: i[6]
+				}
+				if(this.isValid({...producto})){
+					array.push({index:count, ...producto});
+					count++;
+				}
+			}
+		  });
+		  this.abrirModal(array);
+		};
+		reader.readAsBinaryString(target.files[0]);
+	}
+	
+	export(): void {
+		/* generate worksheet */
+		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(this.data);
+
+		/* generate workbook and add the worksheet */
+		const wb: XLSX.WorkBook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+		/* save to file */
+		XLSX.writeFile(wb, this.fileName);
+	}
+	
+	calculoRentabilidad(pvp, costo) {
+		return (pvp - costo) / costo;
+	}
+	isValid(producto):boolean{
+		// console.log(producto);
+		if(producto.codigofabricante && producto.descripcion!="" && producto.precio1>0 && producto.precio1 && producto.costo && producto.idtipo){
+			return true
+		}
+		return false;
+	}
+
+	round(number, precision) {
+		var factor = Math.pow(10, precision);
+		var tempNumber = number * factor;
+		var roundedTempNumber = Math.round(tempNumber);
+		return roundedTempNumber / factor;
+	};
+	abrirModal(data=null){
+		const dialogRef = this.dialog.open(ModalProductsComponent , {
+		  hasBackdrop:true,
+		  width:"70%",
+		  height:"80%",
+		  data:data
+		});
+		// console.log(.);
+		dialogRef.afterClosed().subscribe(data=>{
+			if(data){
+				this.createProductos(data);
+			}
+		})
+	}
+
+	createProductos(productos: ProductoModel[]) { 
+		let respuestas = [];
+		let cont = 0;
+		
+		from(productos).pipe(
+			concatMap(i=>this.productoService.crudProducto(i,1))
+		).subscribe(res=>{
+			if(res._info_id){
+				respuestas.push({
+					descripcion: productos[cont].descripcion,
+					codigoFabricante:  productos[cont].codigofabricante,
+					estado: 'CREADO CORRECTAMENTE',
+				})
+			}else{
+				respuestas.push({
+					descripcion: productos[cont].descripcion,
+					codigoFabricante:  productos[cont].codigofabricante,
+					estado: res._info_desc
+				})
+			}
+			if(cont == productos.length-1){
+				this.load();
+			}
+			cont++;
+		},
+		error=>{
+			alert("Ha ocurrido un error");
+		})
+	}
+
 }
 

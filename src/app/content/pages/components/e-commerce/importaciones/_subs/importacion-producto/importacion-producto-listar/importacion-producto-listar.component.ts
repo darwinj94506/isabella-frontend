@@ -3,8 +3,8 @@ import { Component, OnInit, ElementRef, ViewChild, Input, ChangeDetectionStrateg
 import { MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 // RXJS
-import { Observable, of, throwError } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import { from, Observable, of, throwError } from 'rxjs';
+import { concatMap, debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { fromEvent, merge, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
@@ -23,7 +23,10 @@ import { ProductoModel } from '../../../../_core/models/producto.model';
 import { ImportacionProductoEditarDialogComponent } from '../importacion-producto-editar/importacion-producto-editar-dialog.component';
 import {MercadoLibreItem} from '../../../../_core/models/mercado-libre-item.model';
 import {  Router } from '@angular/router';
+import * as XLSX from "xlsx";
+import { ModalProductsComponent } from '../../../../_shared/modal-products/modal-products.component';
 
+type AOA = any[][];
 
 
 @Component({
@@ -38,15 +41,16 @@ export class ImportacionProductoListarComponent implements OnInit {
 	@Input() idimportacion: number;
 	// Table fields
 	dataSource: ImportacionProductoDataSource;
-	displayedColumns = ['select', '_codigo', '_titulo','_codigofabricante','cantidad','mec','actions'];
+	displayedColumns = ['select', '_codigo', '_descripcion','_codigofabricante','cantidad','actions'];
 	productos: ProductoModel[] = [];
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
-	// Filter fields
-	// @ViewChild('searchInput') searchInput: ElementRef;
-	// Selection
 	selection = new SelectionModel<ImportacionProductoModel>(true, []);
 	importacionProductoResult: ImportacionProductoModel[] = [];
+
+	data: AOA = [[1, 2], [3, 4]];
+	wopts: XLSX.WritingOptions = { bookType: "xlsx", type: "array" };
+	fileName: string = "SheetJS.xlsx";
 
 
 	constructor(private importacionProductoService: ImportacionProductoService,
@@ -64,35 +68,22 @@ export class ImportacionProductoListarComponent implements OnInit {
 		merge(this.sort.sortChange, this.paginator.page)
 			.pipe(
 				tap(() => {
-					this.loadSpecsList();
+					this.load();
 				})
 			)
 			.subscribe();
-
-		// Filtration, bind to searchInput
-		// fromEvent(this.searchInput.nativeElement, 'keyup')
-		// 	.pipe(
-		// 		debounceTime(150),
-		// 		distinctUntilChanged(),
-		// 		tap(() => {
-		// 			this.paginator.pageIndex = 0;
-		// 			this.loadSpecsList();
-		// 		})
-		// 	)
-		// 	.subscribe();
-
 		// Init DataSource
 		this.dataSource = new ImportacionProductoDataSource(this.importacionProductoService);
 		// this loading binded to parent component loading
 		this.dataSource.loading$.subscribe(res => {
 			this.loadingSubject.next(res);
 		});
-		this.loadSpecsList();
+		this.load();
 		this.dataSource.entitySubject.subscribe(res => this.importacionProductoResult = res);
 	
 	}
 
-	loadSpecsList() {
+	load() {
 		this.selection.clear();
 		const queryParams = new QueryParamsModel(
 			null,
@@ -104,18 +95,6 @@ export class ImportacionProductoListarComponent implements OnInit {
 		
 		this.dataSource.loadProductos(queryParams, this.idimportacion);
 	}
-
-
-
-
-	// filterConfiguration(): any {
-	// 	const filter: any = {};
-	// 	const searchText: string = this.searchInput.nativeElement.value;
-
-	// 	filter._specificationName = searchText;
-	// 	filter.value = searchText;
-	// 	return filter;
-	// }
 
 	/** SELECTION */
 	isAllSelected() {
@@ -133,8 +112,6 @@ export class ImportacionProductoListarComponent implements OnInit {
 		}
 	}
 
-	/** ACTIONS */
-	/** Delete */
 	delete(_item: ImportacionProductoModel) {
 		if(_item.mec!=1){ //si el producto aun no ha sido publicado
 			const _title: string = 'Eliminar item';
@@ -147,12 +124,11 @@ export class ImportacionProductoListarComponent implements OnInit {
 				if (!res) {
 					return;
 				}
-	
 				// _item._isdeleted = true;
 				// this.specsListState.setItem(_item, StateActions.DELETE);
 				this.importacionProductoService.crudImportacionProducto(_item,3).subscribe(res=>{
 					this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
-					this.loadSpecsList();
+					this.load();
 			
 				},err=>{
 					alert("Ha ocurrido un error, por favor vuelva a intentarlo");
@@ -164,77 +140,6 @@ export class ImportacionProductoListarComponent implements OnInit {
 		}
 		
 	}
-
-	publicarProductosSeleccionados() {
-		// var itemsPublicar=arra[]
-		const _title: string = 'Producto a publicar';
-		const _description: string = '¿Está seguro que desea publicar estos productos?';
-		const _waitDesciption: string = 'Publicando en Mercado Libre...';
-		const _deleteMessage = 'Productos subidos con éxito!';
-		const dialogRef = this.layoutUtilsService.deleteElement(_title, _description, _waitDesciption);
-		dialogRef.afterClosed().subscribe(res => {
-			if (!res) {
-				return;
-			}
-			var itemMercadoLibre:MercadoLibreItem;
-			var array=[];
-			
-			const length = this.selection.selected.length;
-			for (let i = 0; i < length; i++) {
-				//tomo todos los items seleccionados y los guardo en un nuevo array con la forma que pide mercadolibre para luego enviarselos al servicio 
-				itemMercadoLibre=new MercadoLibreItem(this.selection.selected[i]._titulo,this.selection.selected[i]._descripcion,this.selection.selected[i]._costo,this.selection.selected[i]._stock,this.selection.selected[i]._imagenes)
-                console.log(itemMercadoLibre);
-				array.push({item:itemMercadoLibre,
-							//estos dos campos son para crear las publicaciones en la bdd local, no son exigisdos por mec
-							idproducto:this.selection.selected[i].idproducto,
-							idimportacionproducto:this.selection.selected[i].idimportacionproducto 
-							//campo necesario para actualizar mec de importacion_producto (cambia a 1 cuando este item ha sido publicado en mec)
-						})
-			}
-			let respuestasMec:any []=[];
-
-			this.mercadoLibreService.publicarItem2(array).pipe( catchError((err) => {
-				console.log(err);
-				//manejo de errores ERROR_MEC
-				if(err.error.result && err.error.result!="TOKEN_REQUERIDO"){ //cundo hay un error en mec o cuando hay un error de coneccion o el bakend
-					// let mensajeError=err.error.message ? "" :"";
-					respuestasMec.push({
-						text: `${err.error.titulo}`,
-						status: 0,
-						error:err.error.message ? err.error.message : "error de conexión"
-					})
-					return of([]) //retorna un arreglo vacio
-				}	
-				else if(err.error.result && err.error.result=="TOKEN_REQUERIDO"){
-					return throwError(err);
-				}
-
-			}))
-			.subscribe(res=>{
-				if(res.titulo){
-					//guardo todas las respuestas que devuelve mec
-					respuestasMec.push({
-						text: `${res.titulo}`,
-						status: 1
-					})					
-				}							
-							
-			},err=>{
-				//solo se ejecutara cuando sea un error de token
-				// if(err.error.result && err.error.result=="TOKEN_REQUERIDO"){
-					let _urlAuthMercadoLibre = err.error.message;		
-					console.log(_urlAuthMercadoLibre);	
-					window.open(_urlAuthMercadoLibre,"_blank");
-				// }				
-			},()=>{
-				this.loadSpecsList();
-				// this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
-				this.selection.clear();
-				this.mostrarRespuestas(respuestasMec);
-			})
-		});
-	}
-
 
 	/** Los mensajes son las respuestas del servidor de mercado libre*/
 	mostrarRespuestas(mensajes:any[]) {
@@ -255,7 +160,7 @@ export class ImportacionProductoListarComponent implements OnInit {
 			console.log(res);
 			if (res && res._info_id) {
 				
-				this.loadSpecsList();
+				this.load();
 				const saveMessage = `Specification has been created`;
 				this.layoutUtilsService.showActionNotification(res._info_titulo, res.info_desc, 10000, true, false);
 			}
@@ -272,11 +177,102 @@ export class ImportacionProductoListarComponent implements OnInit {
 		});
 		dialogRef.afterClosed().subscribe(res => {
 			if (res && res._info_id) {
-				this.loadSpecsList();
+				this.load();
 				const saveMessage = `Specification has been updated`;
 				this.layoutUtilsService.showActionNotification(saveMessage, MessageType.Update, 10000, true, false);
 			}
 		});
 	}
+	//subida masiva de ingresos
+	onFileChange(evt: any) {
+		let count = 1;
+		/* wire up file reader */
+		const target: DataTransfer = <DataTransfer>evt.target;
+		if (target.files.length !== 1) throw new Error("Cannot use multiple files");
+		const reader: FileReader = new FileReader();
+		reader.onload = (e: any) => {
+			/* read workbook */
+			const bstr: string = e.target.result;
+			const wb: XLSX.WorkBook = XLSX.read(bstr, { type: "binary" });
 	
+			/* grab first sheet */
+			const wsname: string = wb.SheetNames[0];
+			const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+	
+			/* save data */
+			this.data = <AOA>XLSX.utils.sheet_to_json(ws, { header: 1 });
+			let array = [];
+			this.data.map((i, index) => {
+			if (index != 0 && i[0]!=undefined) 
+			{
+				let item = {
+					idimportacion: 0,
+					codigofabricante: i[3],
+					idtipo: parseInt(i[4], 10),
+					iva: i[6]
+				}
+				if(this.isValid({...item})){
+					array.push({index:count, ...item});
+					count++;
+				}
+			}
+			});
+			this.abrirModal(array);
+		};
+		reader.readAsBinaryString(target.files[0]);
+	}
+		
+		abrirModal(data=null){
+		const dialogRef = this.dialog.open(ModalProductsComponent , {
+			hasBackdrop:true,
+			width:"70%",
+			height:"80%",
+			data:data
+		});
+		// console.log(.);
+		dialogRef.afterClosed().subscribe(data=>{
+			if(data){
+				this.crearItems(data);
+			}
+		})
+	}
+
+	isValid(producto):boolean{
+		// console.log(producto);
+		if(producto.codigofabricante && producto.descripcion!="" && producto.precio1>0 && producto.precio1 && producto.costo && producto.idtipo){
+			return true
+		}
+		return false;
+	}
+
+
+	crearItems(productos: any[]) { 
+		let respuestas = [];
+		let cont = 0;
+		from(productos).pipe(
+			concatMap(i=>this.importacionProductoService.crudImportacionProducto(i,1))
+		).subscribe(res=>{
+			if(res._info_id){
+				respuestas.push({
+					descripcion: productos[cont].descripcion,
+					codigoFabricante:  productos[cont].codigofabricante,
+					estado: 'CREADO CORRECTAMENTE',
+				})
+			}else{
+				respuestas.push({
+					descripcion: productos[cont].descripcion,
+					codigoFabricante:  productos[cont].codigofabricante,
+					estado: res._info_desc
+				})
+			}
+			if(cont == productos.length-1){
+				this.load();
+			}
+			cont++;
+		},
+		error=>{
+			alert("Ha ocurrido un error");
+		})
+	}
+
 }

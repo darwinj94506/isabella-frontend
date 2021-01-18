@@ -3,17 +3,11 @@ import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {  BehaviorSubject } from 'rxjs';
-// import { map, startWith} from 'rxjs/operators';
 import { ImportacionService } from '../../_core/services/index';
-
 import { ImportacionModel } from '../../_core/models/importacion.model';
-// import { SpecificationModel } from '../../_core/models/specification.model';
-// import { TypesUtilsService } from '../../_core/utils/types-utils.service';
 import { ListStateModel } from '../../_core/utils/list-state.model';
 import { SubheaderService } from '../../../../../../core/services/layout/subheader.service';
 import { LayoutUtilsService, MessageType } from '../../_core/utils/layout-utils.service';
-// import { ImportacionProductoService } from '../../_core/services/importacion-producto.service';
-
 @Component({
 	selector: 'm-importacion-editar',
 	templateUrl: './importacion-editar.component.html',
@@ -30,8 +24,6 @@ export class ImportacionEditarComponent implements OnInit {
 	hasFormErrors: boolean = false;
 	remarksListState: ListStateModel;
 	availableYears: number[] = [];
-	// filteredColors: Observable<string[]>;
-	// filteredManufactures: Observable<string[]>;
 
 	constructor(private activatedRoute: ActivatedRoute,
 		private router: Router,
@@ -102,22 +94,8 @@ export class ImportacionEditarComponent implements OnInit {
 		this.importacionForm = this.importacionFB.group({
 			fecha: [this.importacion.fecha, Validators.required],
 			numerodocumento:[this.importacion.numerodocumento,Validators.compose([Validators.required,Validators.maxLength(50)])],
-			
-			// precio: [this.importacion.precio.toString(), [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-			// estado: [this.importacion.estado.toString(), [Validators.required, Validators.min(0), Validators.max(1)]],
 			descripcion:[this.importacion.descripcion,Validators.maxLength(255)]
 		});
-
-		// this.filteredManufactures = this.importacionForm.controls.manufacture.valueChanges
-		// 	.pipe(
-		// 		startWith(''),
-		// 		map(val => this.filterManufacture(val.toString()))
-		// 	);
-		// this.filteredColors = this.importacionForm.controls.color.valueChanges
-		// 	.pipe(
-		// 		startWith(''),
-		// 		map(val => this.filterColor(val.toString()))
-		// );
 
 	}
 
@@ -125,15 +103,7 @@ export class ImportacionEditarComponent implements OnInit {
 		this.productosListState = new ListStateModel(this.importacion.idimportacion);
 	}
 
-	// filterManufacture(val: string): string[] {
-	// 	return this.availableManufactures.filter(option =>
-	// 		option.toLowerCase().includes(val.toLowerCase()));
-	// }
-
-	// filterColor(val: string): string[] {
-	// 	return this.availableColors.filter(option =>
-	// 		option.toLowerCase().includes(val.toLowerCase()));
-	// }
+	
 
 	goBack(id = 0) {
 		let _backUrl = 'products';
@@ -190,13 +160,8 @@ export class ImportacionEditarComponent implements OnInit {
 		_importacion.descripcion = controls['descripcion'].value;
 		_importacion.numerodocumento = controls['numerodocumento'].value;
 		//valores de la interfaz
-
-		_importacion.idusuario = 1; // TODO: get version from userId
-		// _importacion._createddate = this.importacion._createddate;
-		// _importacion._updateddate = this.importacion._updateddate;
+		_importacion.idusuario = 1;
 		this.productosListState.prepareState();
-		
-
 		_importacion._isNew = this.importacion.idimportacion > 0 ? false : true;
 		_importacion._isUpdated = this.importacion.idimportacion > 0;
 		return _importacion;
@@ -204,9 +169,9 @@ export class ImportacionEditarComponent implements OnInit {
 
 	addImportacion(_importacion: ImportacionModel, withBack: boolean = false) {
 		this.loadingSubject.next(true);
-		console.log(_importacion);
+		// console.log(_importacion);
 		this.importacionsService.crudImportacion(_importacion,1).subscribe(res => {
-			console.log(res);
+			// console.log(res);
 			this.loadingSubject.next(false);
 			if (withBack) {
 				this.goBack(res._idimportacion);

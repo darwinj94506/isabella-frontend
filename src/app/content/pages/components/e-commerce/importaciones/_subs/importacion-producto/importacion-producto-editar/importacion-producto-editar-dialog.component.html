@@ -41,7 +41,7 @@
                    
                     <div class="col-lg-12 m--margin-bottom-20-mobile">
                         <mat-form-field class="mat-form-field-fluid">
-                            <input type="text" matInput placeholder="Producto" [formControl]="titulo" />
+                            <input type="text" matInput placeholder="Producto" [formControl]="descripcion" />
                             <mat-hint align="start">
                                 <strong>Producto</strong>
                             </mat-hint>
@@ -77,72 +77,6 @@
 
                 </div>
             </div>
-            <!--esta seccion se muestra si el producto a ingresar no existe en la bdd local -->
-            <div *ngIf="mostrarItemUpcDb">
-                <div class="m-separator m-separator--dashed"></div>
-                <div class="form-group m-form__group row">
-                    <div class="col-lg-6 m--margin-bottom-20-mobile">
-                        <mat-form-field class="mat-form-field-fluid">
-                            <input type="text" matInput [formControl]="tituloAE" />
-
-                            <mat-hint align="start">Título traído de
-                                <strong>upcitemdb.com</strong>
-                            </mat-hint>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-lg-6 m--margin-bottom-20-mobile">
-                        <mat-form-field class="mat-form-field-fluid">
-                            <input type="text" matInput [formControl]="tituloAET" />
-                            <mat-hint align="start">Título traducido con
-                                <strong>yandex.com</strong>
-                            </mat-hint>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="m-separator m-separator--dashed"></div>
-                <div class="form-group m-form__group row">
-                    <div class="col-lg-6 m--margin-bottom-20-mobile">
-                        <mat-form-field class="mat-form-field-fluid">
-                            <textarea type="text" matInput [formControl]="descripcionAE"></textarea>
-                            <mat-hint align="start">Descripción traida de
-                                <strong>upcitemdb.com</strong>
-                            </mat-hint>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-lg-6 m--margin-bottom-20-mobile">
-                        <mat-form-field class="mat-form-field-fluid">
-                            <textarea type="text" matInput [formControl]="descripcionAET"></textarea>
-
-                            <mat-hint align="start">Descripción traducida con
-                                <strong>yandex.com</strong>
-                            </mat-hint>
-                        </mat-form-field>
-                    </div>
-
-                </div>
-                <div class="m-separator m-separator--dashed"></div>
-                <div class="form-group m-form__group row">
-                    <div class="col-lg-6 m--margin-bottom-20-mobile">
-                        <mat-form-field class="mat-form-field-fluid">
-                            <textarea type="text" matInput [formControl]="descripcionAlternativaAE"></textarea>
-                            <mat-hint align="start">Descripción alternativa formada con: título, marca, modelo, color, tamaño, dimensión, peso, traída de
-                                <strong>upcitemdb.com</strong>
-                            </mat-hint>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-lg-6 m--margin-bottom-20-mobile">
-                        <mat-form-field class="mat-form-field-fluid">
-                            <textarea type="text" matInput [formControl]="descripcionAlternativaAET"></textarea>
-
-                            <mat-hint align="start">Descripción alternativa traducida con
-                                <strong>yandex.com</strong>
-                            </mat-hint>
-                        </mat-form-field>
-                    </div>
-
-                </div>
-            </div>
-
         </div>
         <div *ngIf="mostrarGuardarImportacionProducto" class="m-portlet__foot m-portlet__no-border m-portlet__foot--fit">
             <div class="m-form__actions m-form__actions--solid">

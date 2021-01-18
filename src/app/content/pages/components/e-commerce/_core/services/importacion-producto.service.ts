@@ -42,7 +42,7 @@ export class ImportacionProductoService {
 	}
 
 	crudImportacionProducto(importacionProducto: ImportacionProductoModel,opcion:number): Observable<any> {
-		console.log(importacionProducto);
+		// console.log(importacionProducto);
 		return this.http.post<any>(URL_GLOBAL+'crudImportacionProducto', {...importacionProducto,opcion:opcion});
 	}
 

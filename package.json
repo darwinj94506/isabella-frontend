@@ -53,6 +53,7 @@
         "rxjs-tslint": "^0.1.5",
         "web-animations-js": "^2.3.1",
         "webpack-dev-server": "^3.4.1",
+        "xlsx": "^0.16.9",
         "zone.js": "^0.8.26"
     },
     "devDependencies": {

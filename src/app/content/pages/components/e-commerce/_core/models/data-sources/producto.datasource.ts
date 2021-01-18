@@ -10,7 +10,7 @@ export class ProductoDataSource extends BaseDataSource {
 		super();
 	}
 
-	loadCustomers(
+	load(
 		queryParams: QueryParamsModel
 	) {
 		this.loadingSubject.next(true);

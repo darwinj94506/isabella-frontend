@@ -31,7 +31,7 @@
 				<div class="m-form__label m-form__label-no-wrap">
 					<label class="m--font-bold m--font-danger-">Total seleccionados: {{ selection.selected.length }}:</label>
 				</div>
-				<div class="m-form__control m-form__group--inline">
+				<!-- <div class="m-form__control m-form__group--inline">
 					<div>
 						<button mat-raised-button
 							color="accent"
@@ -42,7 +42,7 @@
 							color="warn"
 							matTooltip="Publicar en Wix">Wix</button>
 					</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>
@@ -74,9 +74,9 @@
 			<mat-cell *matCellDef="let importacionproducto" class="mat-column">{{importacionproducto._codigo}}</mat-cell>
 		</ng-container>
 
-		<ng-container matColumnDef="_titulo">
+		<ng-container matColumnDef="_descripcion">
 			<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column">Producto</mat-header-cell>
-			<mat-cell *matCellDef="let importacionproducto" class="mat-column">{{importacionproducto._titulo}}</mat-cell>
+			<mat-cell *matCellDef="let importacionproducto" class="mat-column">{{importacionproducto._descripcion}}</mat-cell>
 		</ng-container>
 
 		<ng-container matColumnDef="_codigofabricante">
@@ -87,17 +87,6 @@
 			<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column">Cantidad Ingresada</mat-header-cell>
 			<mat-cell *matCellDef="let importacionproducto" class="mat-column">{{importacionproducto.cantidad}}</mat-cell>
 		</ng-container>
-		<ng-container matColumnDef="mec">
-			<mat-header-cell *matHeaderCellDef mat-sort-header>Mercado libre</mat-header-cell>
-			<mat-cell *matCellDef="let importacionproducto">
-				<span class="m-badge m-badge--metal m-badge--wide" *ngIf="importacionproducto._imagenes.length>0 && importacionproducto.mec!=1">Listo para publicar</span>
-				<span class="m-badge m-badge--danger m-badge--wide" *ngIf="importacionproducto._imagenes.length<=0 && importacionproducto.mec!=1">Sin imágenes</span>
-				<span class="m-badge m-badge--success m-badge--wide" *ngIf="importacionproducto.mec==1">Publicado</span>
-
-			</mat-cell>
-
-		</ng-container>
-
 		<ng-container matColumnDef="actions">
 			<mat-header-cell *matHeaderCellDef class="mat-column-actions">
 				Actions

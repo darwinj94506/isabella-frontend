@@ -1,0 +1,52 @@
+<mat-dialog-content>
+  <h2 mat-dialog-title align="center">{{titulo}}</h2>
+  <table mat-table [dataSource]="ELEMENT_DATA" *ngIf="data">
+      <ng-container matColumnDef="INDEX">
+        <th mat-header-cell *matHeaderCellDef> Nº</th>
+        <td mat-cell *matCellDef="let element"> {{element.index}} </td>
+      </ng-container>
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="PRODUCTO">
+        <th mat-header-cell *matHeaderCellDef> PRODUCTO</th>
+        <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+      </ng-container>
+  
+      <!-- Name Column -->
+      <ng-container matColumnDef="CODIGOBARRAS">
+        <th mat-header-cell *matHeaderCellDef> CÓDIGO DE BARRAS </th>
+        <td mat-cell *matCellDef="let element"> {{element.codigofabricante}} </td>
+      </ng-container>
+  
+      <!-- Weight Column -->
+      <ng-container matColumnDef="COSTO">
+        <th mat-header-cell *matHeaderCellDef> COSTO (INCLUYE IVA)</th>
+        <td mat-cell *matCellDef="let element"> {{element.costo}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="PRECIO">
+        <th mat-header-cell *matHeaderCellDef> PRECIO (PVP)</th>
+        <td mat-cell *matCellDef="let element"> {{element.precio1}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="TIPO">
+        <th mat-header-cell *matHeaderCellDef> TIPO </th>
+        <td mat-cell *matCellDef="let element"> {{element.idtipo}} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>
+      <tr  mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <div *ngIf="!data">
+      No existen productos
+  </div>
+
+</mat-dialog-content>
+<mat-dialog-actions  align="center">
+  <button mat-raised-button (click)="subirProductos()">
+    OK
+  </button><!-- Call 'update-stated-dialog' from _shared folder -->
+</mat-dialog-actions>
+  
+  
+  

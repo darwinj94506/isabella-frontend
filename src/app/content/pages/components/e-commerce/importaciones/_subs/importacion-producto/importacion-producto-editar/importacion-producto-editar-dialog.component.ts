@@ -25,6 +25,7 @@ export class ImportacionProductoEditarDialogComponent implements OnInit, OnDestr
 	//propiedades del form del producto de la base de datos local
 	codigofabricante = new FormControl('', Validators.required);
 	titulo = new FormControl('');
+	descripcion = new FormControl('');
 	codigo = new FormControl('');
 	// propiedad del form para la cantidad del objeto  importacionProducto 
 	cantidad = new FormControl(null,Validators.compose([Validators.required,Validators.min(1)]));
@@ -94,6 +95,7 @@ export class ImportacionProductoEditarDialogComponent implements OnInit, OnDestr
 			if(producto){	
 				console.log(producto);	
 				this.mostrarGuardarImportacionProducto=true;
+				this.descripcion.setValue(producto.descripcion);
 				this.codigofabricante.setValue(producto.codigofabricante);
 				this.codigo.setValue(producto.codigo);
 				this.titulo.setValue(producto.titulo);
@@ -105,7 +107,7 @@ export class ImportacionProductoEditarDialogComponent implements OnInit, OnDestr
 
 			}else{
 				// si no existe registrado ese producto se busca en una api externa
-				this.buscarProductoApiExterna();
+				alert("No existe un producto con este código registrado")
 			}
 		});
 	}
@@ -149,95 +151,9 @@ export class ImportacionProductoEditarDialogComponent implements OnInit, OnDestr
 		})
 	}
 
-	// Busca un producto en la api de apiupcitembd
-	buscarProductoApiExterna(){
-		this.importacionProductoService.bucarProductoUpcItemDb(this.codigofabricante.value).subscribe((res:any)=>{
-			if(res.code=='OK'){
-				this.mostrarItemUpcDb=true;
-				this.ItemUPCItemDb=res.items[0];
-				console.log(this.ItemUPCItemDb);
-				//asignamos los valores que nos vienen a nuestra variables
-				this.mostrarItemUpcDb=true;
-				this.tituloAE.setValue(this.ItemUPCItemDb.title);
-				this.descripcionAE.setValue(this.ItemUPCItemDb.description);
-				//lógica de formularios para seleccionar las imagenes que venga 
-				if(this.ItemUPCItemDb.images){
-					this.imagenesForm=this.fb.group({
-						imagenesElegidas:new FormArray([])
-					});
-					this.addCheckboxes();
-				}
-				
-
-				//la titulo alternativa se la forma de la uión de title brand,model,color,size,dimension,weight que vienen de la api externa
-				this.descripcionAlternativaAE.setValue(this.ItemUPCItemDb.brand+' '+this.ItemUPCItemDb.model+' '+this.ItemUPCItemDb.color+' '+this.ItemUPCItemDb.size+' '+this.ItemUPCItemDb.dimension+' '+this.ItemUPCItemDb.weight)
-				this.buscandoItem=false;
-				//traducimos los textos que nos llegan de la api externa
-				this.traducirProducto(this.tituloAE.value,this.descripcionAE.value,this.descripcionAlternativaAE.value);
-			}else{
-				//ese codigofabricante no hay en la api externa
-				alert(res.code);
-				this.buscandoItem=false;
-			}
-		})
-	}
-		
-	//logica del ckecbox dinamico, de acuerdo a las imagenes que llegan del producto de la api externa se crean los check boxs
-	private addCheckboxes() {
-    this.ItemUPCItemDb.images.map((o, i) => {
-      const control = new FormControl(false); 
-      (this.imagenesForm.controls.imagenesElegidas as FormArray).push(control);
-    });
-  }
-	
-
-	//traduce un el producto que viende de la api de yandex
-	traducirProducto(t1,t2,t3){
-	
-		this.productoService.getMultipleTranslate(t1,t2,t3).pipe(
-			
-			untilDestroyed(this),
-			catchError(err => throwError(err))
-		)
-		.subscribe(
-			(textosTraducidos) => {
-				console.log(textosTraducidos);
-				//asiganamos los valores traducidos a los inputs
-				this.tituloAET.setValue(textosTraducidos[0].$text);
-				this.descripcionAET.setValue(textosTraducidos[1].$text[0]);
-				this.descripcionAlternativaAET.setValue(textosTraducidos[0].$text+' '+textosTraducidos[2].$text);
-			
-			}
-		);
-	}
-
-
 	onNoClick(): void {
 		this.dialogRef.close();
 	}
-
-	// createImportacionProducto() {
-	// 	if (this.cantidad.invalid) {
-	// 		this.cantidad.markAsTouched();
-	// 		return;
-	// 	}
-
-	// 	this.importacionProductoService.crudImportacionProducto(this.importacionProducto,1)
-	// 		.subscribe(res=>{
-	// 			if(res._info_id){
-	// 				this.dialogRef.close({
-	// 					isEdit: false
-	// 				});
-	
-	// 			}else{
-	// 				alert(res._info_desc);
-	// 			}
-
-	// 		},error=>{
-	// 			alert(error);
-	// 		})
-		
-	// }
 
 	save(){
 		var opcion;
