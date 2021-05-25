@@ -12,6 +12,8 @@ import{MercadoLibreService} from '../../components/e-commerce/_core/services/mer
 import{ModalVerDetalleComponent} from './../modal-ver-detalle/modal-ver-detalle.component';
 import { Observable, BehaviorSubject, from } from 'rxjs';
 import { Subject } from 'rxjs';
+import { formatDate } from '@angular/common';
+
 @Component({
   selector: 'app-crud-egreso',
   templateUrl: './crud-egreso.component.html',
@@ -125,9 +127,14 @@ export class CrudEgresoComponent implements OnInit  {
     }
   
 }
+getToday(){
+  let hoy = new Date();
+  return `${hoy.getFullYear()}-${hoy.getMonth()+1}-${hoy.getDate()}`
+}
 
 crudCabecera(){
-  this._egreso.crudEgreso(this.myForm.value).subscribe(data=>{    
+  console.log(this.myForm.value)
+  this._egreso.crudEgreso({...this.myForm.value, iva: 0.12, total: this.myForm.get('total').value}).subscribe(data=>{    
     // this.loadingSubject.next(false);
 
     this.idEgreso=data[0]._pk;
@@ -197,18 +204,23 @@ abrirModal(data=null){
 }
 
   inicializarFormulario(){
+    // let hoy = new Date().toDateString;
+    console.log(this.getToday()); 
     this.myForm = this.fb.group({
       idegreso:0,
       cedula:'',
       idusuario:this.identity.idusuario,
+      fecha: formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en'),
       idsolicitante:[null,Validators.required],
-      iva:[0.12,Validators.required],
-      total:[0,Validators.required],
-      subTotal:[0,Validators.required],
+      iva:[{value:0, disabled: true},Validators.required],
+      total:[{value: 0, disabled: true },Validators.required],
+      subTotal:[{value: 0, disabled: true},Validators.required],
       observacion:['',Validators.maxLength(200)],
       opcion:1,
       nombresSolicitante:[{value:'',disabled:true},Validators.required]
     })
+    console.log({...this.myForm.value});
+    // console.log(this.myForm.get('total').value)
   }
   get idsolicitante() { return this.myForm.get('idsolicitante'); }
 
@@ -220,8 +232,9 @@ abrirModal(data=null){
 //esto viene del componente detalle cada vez que se agrega un producto
   recibirProductos(productos){
     console.log(productos);
-    var subTotal:number=this.round((productos.total)-(productos.total*0.12),3);
-    this.myForm.patchValue({total:productos.total,subTotal:subTotal})
+    let iva : number = this.round(productos.totalConIva - productos.totalSinIva,2);
+    let subTotal : number = this.round(productos.totalSinIva,2);
+    this.myForm.patchValue({total:productos.totalConIva,subTotal:subTotal, iva})
     this.itemsProductos=productos.productos;
   }
   

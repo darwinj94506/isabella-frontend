@@ -261,12 +261,13 @@ export class ProductoListarComponent implements OnInit {
 		  this.data.map((i, index) => {
 			if (index != 0 && i[0]!=undefined) 
 			{
+				// console.log(i[2])
 				let producto = {
 					descripcion: i[0],
-					precio1: this.round(this.calculoRentabilidad(i[2], i[1]),4),
+					precio1: Number.parseFloat(i[2].toFixed(2)),
 					codigofabricante: i[3],
 					idtipo: parseInt(i[4], 10),
-					costo: this.round(i[1],2),
+					costo: Number.parseFloat(i[1].toFixed(2)),
 					iva: i[6]
 				}
 				if(this.isValid({...producto})){
@@ -292,9 +293,6 @@ export class ProductoListarComponent implements OnInit {
 		XLSX.writeFile(wb, this.fileName);
 	}
 	
-	calculoRentabilidad(pvp, costo) {
-		return (pvp - costo) / costo;
-	}
 	isValid(producto):boolean{
 		// console.log(producto);
 		if(producto.codigofabricante && producto.descripcion!="" && producto.precio1>0 && producto.precio1 && producto.costo && producto.idtipo){
@@ -331,6 +329,7 @@ export class ProductoListarComponent implements OnInit {
 		from(productos).pipe(
 			concatMap(i=>this.productoService.crudProducto(i,1))
 		).subscribe(res=>{
+			console.log(res);
 			if(res._info_id){
 				respuestas.push({
 					descripcion: productos[cont].descripcion,

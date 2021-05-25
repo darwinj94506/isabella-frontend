@@ -12,7 +12,7 @@
 <div id="container">
     <div id="header">
         <div id="logo">
-            <img src="../../../../../assets/logo_mundibox.PNG" alt="">
+            <!-- <img src="../../../../../assets/logo_mundibox.png" alt=""> -->
         </div>
         <div id="reference">
             <h3><strong>Factura</strong></h3>
@@ -24,8 +24,8 @@
     <div id="fromto">
         <div id="from">
             <p>
-                <strong>Mundibox</strong><br> Urdaneta 585 y Loja.
-                <br> 75000 Ambato <br><br> Tel.: 032422301 / 0992514223 <br> Email: ventas@mundibox.com <br> Web: www.mundibox.com
+                <strong>PAÑALERA ISABELLA</strong><br> CeslaoMarin y 12 de mayo.
+                <br>Puyo <br><br> Tel.: 032422301 / 0992514223 <br> Email: ventas@mundibox.com <br> Web: www.pañaleraisabella.com
             </p>
         </div>
         <div id="to">
@@ -43,143 +43,142 @@
         <table>
             <tr>
                 <th>Artículo</th>
-                <th>Iva</th>
-                <th>P.U</th>
                 <th>Cantidad</th>
+                <th>P.U</th>
                 <th>Total</th>
             </tr>
             <tr *ngFor="let item of DETAIL_DATA">
-                <td>{{item.titulo}}</td>
-                <td>{{cabeceraFactura?.iva*100}} %</td>
-                <td>$ {{item.preciounitario}}</td>
+                <td>{{item.descripcion}}</td>
+                <!-- <td>{{cabeceraFactura?.iva*100}} %</td> -->
                 <td>{{item.cantidad}}</td>
-                <td>$ {{item.preciounitario * item.cantidad}}</td>
+                <td>$ {{round(item.precioUnitario,2)}}</td>
+                <td style="width: 60px !important;">$ {{round(item.totalSinIva,2)}}</td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <!-- <td></td> -->
             </tr>
         </table>
     </div>
@@ -193,11 +192,11 @@
             <table border="1">
                 <tr>
                     <td>SubTotal</td>
-                    <td>$ {{round(cabeceraFactura?.total- (cabeceraFactura?.total *cabeceraFactura?.iva),2) }}</td>
+                    <td>$ {{round(getSubtotal(),2)}}</td>
                 </tr>
                 <tr>
-                    <td>Total IVA {{cabeceraFactura?.iva*100}} %</td>
-                    <td>$ {{round(cabeceraFactura?.total *cabeceraFactura?.iva,2)}}</td>
+                    <td>IVA {{cabeceraFactura?.iva*100}} %</td>
+                    <td>$ {{round(cabeceraFactura?.total-getSubtotal(),2)}}</td>
                 </tr>
                 <tr>
                     <td>Total</td>
@@ -208,6 +207,6 @@
     </div>
 
     <div id="footer">
-        <p> Contacto <br> mundibox toys</p>
+        <p> Contacto <br> Pañalera Isabella</p>
     </div>
 </div>

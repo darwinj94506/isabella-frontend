@@ -55,8 +55,11 @@ export class ModalVerDetalleComponent implements OnInit {
 
   getDetalleEgreso(){
     this._egreso.getDetalleEgreso(this.idEgreso).subscribe((data)=>{
-      console.log(data);
-      this.DETAIL_DATA=data.data;
+      
+      // this.DETAIL_DATA = data.data;
+
+      this.DETAIL_DATA = data.data.map(i=>({...i, precioUnitario: this.getValorSinIva(Number(i.preciounitario)), 
+                                totalSinIva: this.getValorSinIva(Number(i.preciounitario))*i.cantidad}))
       this.cabeceraFactura.total=this.DETAIL_DATA[0].total;
       this.cabeceraFactura.iva=this.DETAIL_DATA[0].iva;
       this.cabeceraFactura.fecha=this.DETAIL_DATA[0].fecha;
@@ -65,11 +68,24 @@ export class ModalVerDetalleComponent implements OnInit {
       this.cabeceraFactura.apellidos=this.DETAIL_DATA[0].apellidos;
       this.cabeceraFactura.cedula=this.DETAIL_DATA[0].cedula;
       this.cabeceraFactura.direccion=this.DETAIL_DATA[0].direccion;
-      
+     
     })
   }
   close(data) {
     this.dialogRef.close(data);
+  }
+
+  public getValorSinIva(valor){
+    return valor - (valor/1.12)*0.12
+  }
+  public getSubtotal(){
+    let subtotal = 0;
+    this.DETAIL_DATA.forEach(i=>{
+      // console.log(i);
+      subtotal += i.totalSinIva;
+    })
+    // console.log(subtotal);
+    return subtotal;
   }
 
   inicializarFormulario(){

@@ -55,7 +55,7 @@ export class ProductoEditarDialogComponent implements OnInit {
 			idtipo: [this.producto.idtipo, Validators.required],
 			titulo: [],
 			descripcion: [this.producto.descripcion,Validators.compose([Validators.required,Validators.maxLength(255)])],
-			precio1: [this.producto.precio1*100, Validators.compose([Validators.required,Validators.max(100),Validators.min(0)])],
+			precio1: [this.producto.precio1, Validators.compose([Validators.required,Validators.max(1000),Validators.min(0)])],
 			precio2: [],
 			precio3: [],
 			costo: [this.producto.costo, Validators.compose([Validators.required,Validators.min(0)])],

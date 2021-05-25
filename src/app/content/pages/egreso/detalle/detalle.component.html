@@ -48,9 +48,18 @@
                                 <mat-header-cell *matHeaderCellDef> Cantidad </mat-header-cell>
                                 <mat-cell *matCellDef="let element; let i=index;">
                                     <mat-form-field floatLabel="never">
-                                        <input matInput type="number" placeholder="Cantidad" (ngModelChange)="calcularTotal($event,i,2)" [(ngModel)]="element.cantidad" required>
+                                        <input matInput type="number" placeholder="Cantidad" (ngModelChange)="calcularTotal($event,i,1)" [(ngModel)]="element.cantidad" required>
                                         <!-- <mat-error *ngIf="i.errors?.min">Debe ser maror a cero</mat-error>
                                         <mat-error *ngIf="i.errors?.required">Campo obligatorio</mat-error> -->
+                                    </mat-form-field>
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="precioSinIva">
+                                <mat-header-cell *matHeaderCellDef> Precio sin IVA</mat-header-cell>
+                                <mat-cell *matCellDef="let element;let i=index;">
+                                    <mat-form-field floatLabel="never">
+                                        <input matInput type="number" placeholder="PrecioSinIva" [(ngModel)]="element.precioSinIva" required [disabled]="true">
                                     </mat-form-field>
                                 </mat-cell>
                             </ng-container>
@@ -58,11 +67,20 @@
                             <ng-container matColumnDef="precio">
                                 <mat-header-cell *matHeaderCellDef> Precio </mat-header-cell>
                                 <mat-cell *matCellDef="let element;let i=index;">
-                                    <mat-select placeholder="precio" name="precio" (selectionChange)="calcularTotal($event,i,1)" [(ngModel)]="element.precio" required>
-                                        <mat-option [value]="element.precio1">${{ element.precio1 }}
-                                        </mat-option>
-                                      
-                                    </mat-select>
+                                    <mat-form-field floatLabel="never">
+                                        <input matInput type="number" placeholder="Precio" (ngModelChange)="calcularTotal($event,i,2)" [(ngModel)]="element.precio" required>
+                                    </mat-form-field>
+                                </mat-cell>
+                            </ng-container>
+                            
+                            <ng-container matColumnDef="totalSinIva">
+                                <mat-header-cell *matHeaderCellDef> Total sin IVA</mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                    <mat-form-field floatLabel="never">
+                                        <span matSuffix>$&nbsp;</span>
+                                        <input matInput type="number" placeholder="Total sin IVA" name="totalSinIva" [(ngModel)]="element.totalSinIva" required [disabled]="true">
+                                        <!-- <mat-error *ngIf="cantidad.min">Debe ser mayor a cero</mat-error>               -->
+                                    </mat-form-field>
                                 </mat-cell>
                             </ng-container>
 
@@ -76,6 +94,7 @@
                                     </mat-form-field>
                                 </mat-cell>
                             </ng-container>
+                            
                           
                             <ng-container matColumnDef="actions">
                                 <mat-header-cell *matHeaderCellDef>

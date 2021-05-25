@@ -49,9 +49,22 @@
                             </div>
                             <div class="col-md-2 m--margin-bottom-10-mobile">
                                 <mat-form-field class="mat-form-field-fluid">
+                                    <!-- <span matSuffix>%&nbsp;</span> -->
+                                    <input matInput type="date" placeholder="fecha" formControlName="fecha">
+                                    <mat-hint align="start">Por favor ingrese la
+                                        <strong>Fecha</strong>
+                                    </mat-hint>
+                                    <mat-error class="error-message" *ngIf="myForm.get('fecha').hasError('required')
+                            && (myForm.get('fecha').dirty || myForm.get('fecha').touched)">
+                                        La fecha es obligatoria</mat-error>
+
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-2 m--margin-bottom-10-mobile">
+                                <mat-form-field class="mat-form-field-fluid">
                                     <span matSuffix>%&nbsp;</span>
                                     <input matInput type="number" placeholder="Iva" formControlName="iva">
-                                    <mat-hint align="start">Por favor ingrese el
+                                    <mat-hint align="start">
                                         <strong>iva</strong>
                                     </mat-hint>
                                     <mat-error class="error-message" *ngIf="myForm.get('iva').hasError('required')
@@ -60,7 +73,7 @@
 
                                 </mat-form-field>
                             </div>
-                            <div class="col-md-3 m--margin-bottom-10-mobile">
+                            <div class="col-md-2 m--margin-bottom-10-mobile">
                                 <mat-form-field class="mat-form-field-fluid">
                                 <span matSuffix>$&nbsp;</span>
                                     <input matInput type="number" placeholder="SubTotal" formControlName="subTotal">
@@ -71,7 +84,7 @@
                                 </mat-form-field>
                             </div>
 
-                            <div class="col-md-3 m--margin-bottom-10-mobile">
+                            <div class="col-md-2 m--margin-bottom-10-mobile">
                                 <mat-form-field class="mat-form-field-fluid">
                                     <span matSuffix>$&nbsp;</span>
                                     <input matInput type="number" placeholder="Total" formControlName="total">
