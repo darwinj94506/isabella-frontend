@@ -9,15 +9,17 @@ import { TranslateService } from '@ngx-translate/core';
 // Services
 import { ProductoService } from '../../_core/services/index';
 import { LayoutUtilsService, MessageType } from '../../_core/utils/layout-utils.service';
-import { HttpUtilsService } from '../../_core/utils/http-utils.service';
+// import { HttpUtilsService } from '../../_core/utils/http-utils.service';
 // Models
 import { QueryParamsModel } from '../../_core/models/query-models/query-params.model';
-import { ProductoModel } from '../../_core/models/producto.model';
+import { ProductoModel, ClasificacionModel, CategoriaModel, MarcaModel, PresentacionModel } from '../../_core/models';
 import { ProductoDataSource } from '../../_core/models/data-sources/producto.datasource';
 // Components
 import { ProductoEditarDialogComponent } from '../producto-editar/producto-editar.dialog.component';
 import { ModalProductsComponent } from '../../_shared/modal-products/modal-products.component';
 import * as XLSX from "xlsx";
+import { CategoriaService } from '../../_core/services/index';
+
 
 type AOA = any[][];
 
@@ -28,14 +30,16 @@ type AOA = any[][];
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductoListarComponent implements OnInit {
-
+	filterByIdCategoria: number = 0;
+	filterByIdMarca : number = 0;
+	// tallas = [{ name: 'RN / 0 (Recién nacido)', value:0, name: '', value:}, { }]
 	// Table fields
 	dataSource: ProductoDataSource;
-	displayedColumns = ['codigo', 'descripcion', 'codigofabricante', '_stock', 'actions'];
+	displayedColumns = ['codigo', 'categoria', 'marca', 'descripcion', 'codigofabricante','pvp' ,'_stock', 'actions'];
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
 	// Filter fields
-	// @ViewChild('searchInput') searchInput: ElementRef;
+	@ViewChild('searchInput') searchInput: ElementRef;
 	filterStatus: string = '';
 	filterType: string = '';
 	// Selection
@@ -47,34 +51,43 @@ export class ProductoListarComponent implements OnInit {
 	data: AOA = [[1, 2], [3, 4]];
 	wopts: XLSX.WritingOptions = { bookType: "xlsx", type: "array" };
 	fileName: string = "SheetJS.xlsx";
-
+	// clasificaciones: ClasificacionModel[] = [];
+	categorias: CategoriaModel[] = []; 
+	marcas: MarcaModel[] = [];
 	constructor(
-		private productoService: ProductoService,
+		private _productoService: ProductoService,
 		public dialog: MatDialog,
 		public snackBar: MatSnackBar,
 		private layoutUtilsService: LayoutUtilsService,
 		private translate: TranslateService,
-		// private productoService: ProductoService,
+		private _categoriaService: CategoriaService
 	) {}
 
 	/** LOAD DATA */
 	ngOnInit() {
-		// If the user changes the sort order, reset back to the first page.
+		this._categoriaService.getCategorias()
+			.subscribe(categorias=>{
+				this.categorias = categorias; 
+				// console.log(categorias);
+		})
+		this._categoriaService.getAllMarcas()
+			.subscribe(marcas=>{
+				this.marcas = marcas;
+			})
+
 		this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		merge(this.sort.sortChange, this.paginator.page)
 			.pipe(
 				tap(() => {
-					this.load();
+					this.filter();
 				})
 			)
 			.subscribe();
 
-		// // Filtration, bind to searchInput
 		// fromEvent(this.searchInput.nativeElement, 'keyup')
 		// 	.pipe(
-		// 		// tslint:disable-next-line:max-line-length
-		// 		debounceTime(150), // The user can type quite quickly in the input box, and that could trigger a lot of server requests. With this operator, we are limiting the amount of server requests emitted to a maximum of one every 150ms
-		// 		distinctUntilChanged(), // This operator will eliminate duplicate values
+		// 		debounceTime(150), 
+		// 		distinctUntilChanged(),
 		// 		tap(() => {
 		// 			this.paginator.pageIndex = 0;
 		// 			this.load();
@@ -84,15 +97,47 @@ export class ProductoListarComponent implements OnInit {
 
 		// Init DataSource
 		const queryParams = new QueryParamsModel(this.filterConfiguration(false));
-		this.dataSource = new ProductoDataSource(this.productoService);
+		queryParams.opcion = 1;
+		console.log(queryParams);
+		this.dataSource = new ProductoDataSource(this._productoService);
 		// First load
 		this.dataSource.load(queryParams);
 		this.dataSource.entitySubject.subscribe(res => (this.products = res));
 
 	}
 
+	filter(){
+		// console.log([idCategoria, idMarca, opcion])
+		const queryParams = new QueryParamsModel(
+			this.filterConfiguration(true),
+			this.sort.direction,
+			this.sort.active,
+			this.paginator.pageIndex,
+			this.paginator.pageSize
+		);
+		queryParams.idcategoria = this.filterByIdCategoria;
+		queryParams.idmarca = this.filterByIdMarca;
+		queryParams.opcion = this.getOpcionFilter();
+		// console.log([this.filterByIdMarca, this.filterByIdCategoria]);
+		console.log([this.filterByIdMarca, this.filterByIdCategoria])
+		console.log(queryParams);
+		this.dataSource.load(queryParams);
+	}
+
+	getOpcionFilter() : number {
+		if(this.filterByIdCategoria === 0 && this.filterByIdMarca === 0 )
+			return 1;
+		if(this.filterByIdCategoria === 0 && this.filterByIdMarca > 0 )
+			return 2;
+		if(this.filterByIdCategoria > 0 && this.filterByIdMarca === 0 )
+			return 3;
+		if(this.filterByIdCategoria > 0 && this.filterByIdMarca > 0 )
+			return 4;
+	}
+
+	
 	load() {
-		this.selection.clear();
+		// this.selection.clear();
 		const queryParams = new QueryParamsModel(
 			this.filterConfiguration(true),
 			this.sort.direction,
@@ -101,7 +146,7 @@ export class ProductoListarComponent implements OnInit {
 			this.paginator.pageSize
 		);
 		this.dataSource.load(queryParams);
-		this.selection.clear();
+		// this.selection.clear();
 	}
 
 	/** FILTRATION */
@@ -144,7 +189,7 @@ export class ProductoListarComponent implements OnInit {
 	 			return;
 	 		}
 
-	 		this.productoService.crudProducto(_item,3).subscribe((res) => {
+	 		this._productoService.crudProducto(_item,3).subscribe((res) => {
 	 			this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
 	 			this.load();
 	 		},err=>{
@@ -172,9 +217,8 @@ export class ProductoListarComponent implements OnInit {
 			if (!res) {
 				return;
 			}
-
 			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType, 10000, true, false);
-			this.load();
+			this.filter();
 		});
 	}
 
@@ -327,7 +371,7 @@ export class ProductoListarComponent implements OnInit {
 		let cont = 0;
 		
 		from(productos).pipe(
-			concatMap(i=>this.productoService.crudProducto(i,1))
+			concatMap(i=>this._productoService.crudProducto(i,1))
 		).subscribe(res=>{
 			console.log(res);
 			if(res._info_id){

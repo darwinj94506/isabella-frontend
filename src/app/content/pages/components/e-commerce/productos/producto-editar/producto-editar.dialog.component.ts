@@ -4,9 +4,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TypesUtilsService } from '../../_core/utils/types-utils.service';
 import { ProductoService } from '../../_core/services/index';
 import { CategoriaService } from '../../_core/services/index';
-import { ProductoModel } from '../../_core/models/producto.model';
+import { ProductoModel, 
+		 CategoriaModel, 
+		 ClasificacionModel, 
+		 MarcaModel, 
+		 PresentacionModel} from '../../_core/models';
+		 import {TALLAS, UNIDADES_MEDIDA} from '../config-prod';
 import { MatPaginator, MatSort, MatSnackBar, MatDialog } from '@angular/material';
-import {CategoriaModel} from '../../_core/models/categoria.model';
 import{URL_GLOBAL} from '../../_core/global';
 @Component({
 	selector: 'm-producto-editar-dialog',
@@ -14,12 +18,19 @@ import{URL_GLOBAL} from '../../_core/global';
 	// changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductoEditarDialogComponent implements OnInit {
+	tallas = TALLAS ;
+	unidades_medida = UNIDADES_MEDIDA;
+	clasificaciones : ClasificacionModel[];
+	categorias: any[];
+	presentaciones : any[] = [];
+	marcas : any [];
+
 	producto: ProductoModel;
 	productoForm: FormGroup;
 	hasFormErrors: boolean = false;
 	viewLoading: boolean = false;
 	loadingAfterSubmit: boolean = false;
-	categorias:CategoriaModel[];
+
 	precios=[{id:1},{id:2},{id:3}];
 	public url_imagenes="";
 
@@ -34,17 +45,40 @@ export class ProductoEditarDialogComponent implements OnInit {
 	/** LOAD DATA */
 	ngOnInit() {
 		this.url_imagenes=URL_GLOBAL+"upload_images";
-		// console.log(this.url_imagenes);
 		this.producto = this.data.producto;
+		this.categorias = [ { idcategoria:this.producto.idcategoria, 
+			nombre: this.producto.categoria, clear(){} }]
+		this.presentaciones = [ { idpresentacion:this.producto.idpresentacion, 
+			idmarca:this.producto.idmarca, idcategoria:this.producto.idcategoria, 
+			nombre: this.producto.presentacion, clear(){} }]	
 		console.log(this.producto);
 		this.createForm();
-		this.onChanges();
+		// this.onChanges();
+		this.categoriaService.getAllClasificaciones().subscribe(clasificaciones=>{
+			this.clasificaciones = clasificaciones;
+		})
 
+		this.categoriaService.getAllMarcas().subscribe(marcas=>{
+			this.marcas = marcas;
+		})
+	}
 	
-		//llamar a todas las categorias (tipos)
-		this.categoriaService.getCategorias().subscribe(categorias=>{
-			console.log(categorias);
-			this.categorias=categorias;
+	getCategoriasByClasificacion(idclasificacion){
+		// this.marcas = [];
+		this.presentaciones = [];
+		this.categorias = [];
+		console.log(idclasificacion);
+		this.categoriaService.getCategoriasByClasificaciones(idclasificacion).subscribe(categorias=>{
+			console.log(categorias)
+			this.categorias = categorias;
+		})
+	}
+
+	getPresentacionesByMarcaAndCategoria(idmarca){
+		let idcategoria = this.productoForm.get('idcategoria').value
+		this.categoriaService.getPresentacionesByMarcaAndCategoria(idmarca, idcategoria).subscribe(presentaciones=>{
+			console.log(presentaciones);
+			this.presentaciones = presentaciones;
 		})
 	}
 
@@ -52,21 +86,26 @@ export class ProductoEditarDialogComponent implements OnInit {
 	createForm() {
 		// //si se abre este modal desde importacion-producto entonces nos vendra el codigo de importacion de fabricante, descripcion y titulo  
 		this.productoForm = this.fb.group({
-			idtipo: [this.producto.idtipo, Validators.required],
+			idclasificacion: [this.producto.idclasificacion, Validators.required],
+			idcategoria: [ this.producto.idcategoria, Validators.required],
+			idmarca : [this.producto.idmarca, Validators.required],
+			idpresentacion: [this.producto.idpresentacion, Validators.required],
 			titulo: [],
 			descripcion: [this.producto.descripcion,Validators.compose([Validators.required,Validators.maxLength(255)])],
-			precio1: [this.producto.precio1, Validators.compose([Validators.required,Validators.max(1000),Validators.min(0)])],
-			precio2: [],
-			precio3: [],
-			costo: [this.producto.costo, Validators.compose([Validators.required,Validators.min(0)])],
+			pvp: [this.producto.pvp, Validators.compose([Validators.required,Validators.max(1000),Validators.min(0)])],
 			codigofabricante: [this.producto.codigofabricante,Validators.compose([Validators.required,Validators.maxLength(20), Validators.pattern("^[0-9]*$")])],
-			preciofacturar: [],
-			preciomercadolibre: [],
+			iva:[this.producto.iva, Validators.required],
+			stockMinimo:[this.producto.stock_minimo], 
+			talla:[this.producto.talla],
+			unidadMedida:[this.producto.unidad_medida],
+			cantidad:[this.producto.cantidad]
+			
 		});
-		this.productoForm.get('descripcion').valueChanges.subscribe(val => {
-			console.log(val.toUpperCase());
-			this.productoForm.patchValue({descripcion:val.toUpperCase()}, {emitEvent: false})
-		});
+
+		// this.productoForm.get('descripcion').valueChanges.subscribe(val => {
+		// 	console.log(val.toUpperCase());
+		// 	this.productoForm.patchValue({descripcion:val.toUpperCase()}, {emitEvent: false})
+		// });
 	}
 
 
@@ -93,18 +132,18 @@ export class ProductoEditarDialogComponent implements OnInit {
 		const controls = this.productoForm.controls;
 		const _producto = new ProductoModel();
 		_producto.idproducto = this.producto.idproducto;
-		_producto.idtipo = controls['idtipo'].value;
+		_producto.idpresentacion = controls['idpresentacion'].value;
+		_producto.codigofabricante = controls['codigofabricante'].value;
 		_producto.codigo = this.producto.codigo;
 		_producto.titulo = '';
 		_producto.descripcion = controls['descripcion'].value;
-		_producto.precio1 = Number.parseFloat(controls['precio1'].value)/100;
-		_producto.precio2 = 0
-		_producto.precio3 = 0
-		_producto.costo = controls['costo'].value;
-		_producto.imagenes = []
-		_producto.codigofabricante = controls['codigofabricante'].value;
-		_producto.preciofacturar = 1;
-		_producto.preciomercadolibre = 1;
+		_producto.pvp = Number.parseFloat(controls['pvp'].value);
+		_producto.iva = controls['iva'].value;
+		_producto.stock_minimo = controls['stockMinimo'].value;
+		_producto.talla = controls['talla'].value;
+		_producto.unidad_medida = controls['unidadMedida'].value;
+		_producto.cantidad = controls['cantidad'].value;
+		_producto.imagenes = [];
 		return _producto;
 	}
 
@@ -131,16 +170,17 @@ export class ProductoEditarDialogComponent implements OnInit {
 	}
 
 	update(producto: ProductoModel) {
+		console.log(producto);
 		this.loadingAfterSubmit = true;
 		this.viewLoading = true;
 		this.productoService.crudProducto(producto,2).subscribe(res => {
-			/* Server loading imitation. Remove this on real code */
 			this.viewLoading = false;
-			this.producto.idproducto=res._idproducto;
-			this.dialogRef.close(
-				producto
-				// isEdit: truetrue
-			);
+			// this.producto.idproducto = res._idproducto;
+			if(!res._info_id){
+				alert(res._info_desc);
+				return; 
+			}
+			this.dialogRef.close(res._info_id);
 		},error=>{
 			alert("Ha ocurrido un error en la solicitud:"+error);
 			console.log(error);
@@ -172,6 +212,7 @@ export class ProductoEditarDialogComponent implements OnInit {
 	createProducto(producto: ProductoModel) { 
 		this.loadingAfterSubmit = true;
 		this.viewLoading = true;
+		console.log(producto);
 		this.productoService.crudProducto(producto,1).subscribe(res=> {
 			if(res._info_id){
 				this.producto.idproducto=res._idproducto;
@@ -199,77 +240,6 @@ export class ProductoEditarDialogComponent implements OnInit {
 	onNoClick(): void {
 		this.dialogRef.close();
 	}
-
-	public valorPrecio1;
-	public valorPrecio2;
-	public valorPrecio3;
-
-	//funcion para calcular el valor de los porcentajes
-	onChanges(): void {
-		const controls = this.productoForm.controls;
-	
-		if(controls['costo'].value){
-			let costo=Number.parseFloat(controls['costo'].value);
-			if(this.productoForm.get('precio1').value){
-				let precio1 =  Number.parseFloat(controls['precio1'].value)/100;
-				this.valorPrecio1=this.round(costo + costo*precio1,2);
-			}
-			if(this.productoForm.get('precio2').value){
-				let precio2 = Number.parseFloat(controls['precio2'].value)/100;
-				this.valorPrecio2=this.round(costo + costo*precio2,2);
-				
-			}
-			if(this.productoForm.get('precio3').value){
-				let precio3 = Number.parseFloat(controls['precio3'].value)/100;
-				this.valorPrecio3= this.round(costo + costo*precio3,2);
-			}
-		}
-
-		this.productoForm.get('costo').valueChanges.subscribe((costo:number) => {
-
-			if(this.productoForm.get('precio1').value){
-				let precio1 =  Number.parseFloat(controls['precio1'].value)/100;
-				this.valorPrecio1=this.round(costo + costo*precio1,2);
-			}
-			if(this.productoForm.get('precio2').value){
-				let precio2 = Number.parseFloat(controls['precio2'].value)/100;
-				this.valorPrecio2=this.round(costo + costo*precio2,2);
-				
-			}
-			if(this.productoForm.get('precio3').value){
-				let precio3 = Number.parseFloat(controls['precio3'].value)/100;
-				this.valorPrecio3= this.round(costo + costo*precio3,2);
-			}
-		});
-
-		this.productoForm.get('precio1').valueChanges.subscribe((precio1:number) => {
-
-			if(this.productoForm.get('costo').value){
-				let costo =  Number.parseFloat(controls['costo'].value);
-				this.valorPrecio1=this.round(costo + costo*(precio1/100),2);
-			}
-		
-		});
-
-		this.productoForm.get('precio2').valueChanges.subscribe((precio2:number) => {
-			
-			if(this.productoForm.get('costo').value){
-				let costo =  Number.parseFloat(controls['costo'].value);
-				this.valorPrecio2=this.round(costo + costo*(precio2/100),2);
-			}
-		
-		});
-
-		this.productoForm.get('precio3').valueChanges.subscribe((precio3:number) => {
-
-			if(this.productoForm.get('precio3').value){
-				let costo =  Number.parseFloat(controls['costo'].value);
-				this.valorPrecio3=this.round(costo + costo*(precio3/100),2);
-			}
-		
-		});
-	  }
-
 	  round(number, precision) {
 		var factor = Math.pow(10, precision);
 		var tempNumber = number * factor;

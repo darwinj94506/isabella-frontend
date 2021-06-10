@@ -6,6 +6,11 @@ export class QueryParamsModel {
 	pageNumber: number;
 	pageSize: number;
 
+	// for filter producto
+	idcategoria?: number;
+	idmarca?: number;
+	opcion?: number;
+
 	// constructor overrides
 	constructor(_filter: any,
 		_sortOrder: string = 'asc',
@@ -17,5 +22,9 @@ export class QueryParamsModel {
 		this.sortField = _sortField;
 		this.pageNumber = _pageNumber;
 		this.pageSize = _pageSize;
+		//
+		this.opcion = 1;
+		this.idcategoria = 0;
+		this.idmarca = 0;
 	}
 }

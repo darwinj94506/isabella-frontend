@@ -46,7 +46,7 @@ export class CategoriaEditarComponent implements OnInit {
 
 	/** UI */
 	getTitle(): string {
-		if (this.categoria.idtipo > 0) {
+		if (this.categoria.idcategoria > 0) {
 			return `Editar categoria '${this.categoria.nombre}'`;
 		}
 
@@ -63,7 +63,7 @@ export class CategoriaEditarComponent implements OnInit {
 	prepareCustomer(): CategoriaModel {
 		const controls = this.categoriaForm.controls;
 		const _categoria = new CategoriaModel();
-    _categoria.idtipo = this.categoria.idtipo;
+    _categoria.idcategoria = this.categoria.idcategoria;
     _categoria.nombre = controls['nombre'].value;
 		console.log('_categoria', _categoria);
 		return _categoria;
@@ -84,7 +84,7 @@ export class CategoriaEditarComponent implements OnInit {
 		}
 
 		const editedCategoria = this.prepareCustomer();
-		if (editedCategoria.idtipo > 0) {
+		if (editedCategoria.idcategoria > 0) {
 			this.updateCustomer(editedCategoria);
 		} else {
 			this.createCustomer(editedCategoria);
@@ -117,7 +117,7 @@ export class CategoriaEditarComponent implements OnInit {
 			console.log(res);
 
 			if(res._info_id){
-				categoria.idtipo=res._idtipo
+				categoria.idcategoria=res._idtipo
 				this.dialogRef.close(
 					categoria
 					// isEdit: false

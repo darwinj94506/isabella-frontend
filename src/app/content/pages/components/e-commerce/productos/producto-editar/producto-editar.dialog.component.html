@@ -21,25 +21,24 @@
             </m-alert>
 
             <div class="form-group m-form__group row">
-                <!-- <div class="col-lg-6 m--margin-bottom-20-mobile">
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
-                        <textarea matInput placeholder="Ingrese el título" formControlName="titulo"></textarea>
-                        <mat-hint align="start">Por favor ingrese el
-                            <strong>título</strong>
+                        <mat-select placeholder="Ingrese la Clasificación" formControlName="idclasificacion" 
+                            (selectionChange)="getCategoriasByClasificacion($event.value)">
+                            <mat-option [value]="cl.idclasificacion" *ngFor="let cl of clasificaciones">{{cl.nombre}}</mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <strong>La clasificacion es requerida</strong>
+                        </mat-error>
+                        <mat-hint align="start">Por favor ingrese la
+                            <strong>Clasificacion</strong>
                         </mat-hint>
-                        <mat-error *ngIf="f.titulo.errors?.required">
-                            <strong>El títuo es requerido</strong>
-                        </mat-error>
-                         <mat-error *ngIf="f.titulo.errors?.maxlength">
-                            <strong><br>Máximo 54 caracteres</strong>
-                        </mat-error>
-                         
                     </mat-form-field>
-                </div> -->
-                <div class="col-lg-4 m--margin-bottom-20-mobile">
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
-                        <mat-select placeholder="Ingrese la categoría" formControlName="idtipo">
-                            <mat-option [value]="cat.idtipo" *ngFor="let cat of categorias">{{cat.nombre}}</mat-option>
+                        <mat-select placeholder="Ingrese la categoría" formControlName="idcategoria">
+                            <mat-option [value]="cat.idcategoria" *ngFor="let cat of categorias">{{cat.nombre}}</mat-option>
                         </mat-select>
                         <mat-error>
                             <strong>La categoría es requerida</strong>
@@ -49,9 +48,44 @@
                         </mat-hint>
                     </mat-form-field>
                 </div>
-                <div class="col-lg-8 m--margin-bottom-20-mobile">
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
-                        <textarea matInput placeholder="Ingrese la Descripción" formControlName="descripcion"></textarea>
+                        <mat-select placeholder="Ingrese la Marca" formControlName="idmarca" 
+                            (selectionChange)="getPresentacionesByMarcaAndCategoria($event.value)">
+                            <mat-option [value]="mc.idmarca" *ngFor="let mc of marcas">{{mc.nombre}}</mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <strong>La Marca es requerida</strong>
+                        </mat-error>
+                        <mat-hint align="start">Por favor ingrese la
+                            <strong>marca</strong>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <mat-select placeholder="Ingrese la Presentación" formControlName="idpresentacion">
+                            <mat-option [value]="pres.idpresentacion" *ngFor="let pres of presentaciones">{{pres.nombre}}</mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <strong>La Presentación es requerida</strong>
+                        </mat-error>
+                        <mat-hint align="start">Por favor ingrese la
+                            <strong>Presentación</strong>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="m-separator m-separator--dashed"></div>
+            <div class="form-group m-form__group row">
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <textarea matInput placeholder="Ingrese la Descripción"
+                            oninput="let p = this.selectionStart;
+                            this.value = this.value.toUpperCase();
+                            this.setSelectionRange(p, p);" 
+                            formControlName="descripcion"></textarea>
                         <mat-hint align="start">Por favor ingrese la
                             <strong>descripción</strong>
                         </mat-hint>
@@ -63,24 +97,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-            </div>
-
-            <div class="m-separator m-separator--dashed"></div>
-            <div class="form-group m-form__group row">
-                <!-- <div class="col-lg-3 m--margin-bottom-20-mobile">
-                    <mat-form-field class="mat-form-field-fluid">
-                        <mat-select placeholder="Ingrese la categoría" formControlName="idtipo">
-                            <mat-option [value]="cat.idtipo" *ngFor="let cat of categorias">{{cat.nombre}}</mat-option>
-                        </mat-select>
-                        <mat-error>
-                            <strong>La categoría es requerida</strong>
-                        </mat-error>
-                        <mat-hint align="start">Por favor ingrese la
-                            <strong>categoría</strong>
-                        </mat-hint>
-                    </mat-form-field>
-                </div> -->
-                <div class="col-lg-4 m--margin-bottom-20-mobile">
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
                         <input matInput placeholder="Ingrese código de fabricante" formControlName="codigofabricante" />
                         <mat-hint align="start">Por favor ingrese el
@@ -97,120 +114,82 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="col-lg-4 m--margin-bottom-20-mobile">
+               
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
-                        <span matPrefix>$&nbsp; </span>
-                        <input type="number" matInput placeholder="Ingrese el costo" formControlName="costo" />
-                        
-                        <mat-hint align="start">Por favor ingrese el
-                            <strong>costo</strong>
-                        </mat-hint>
-                         <mat-error *ngIf="f.costo.errors?.required">
-                            <strong>El costo es requerido</strong>
-                        </mat-error>
-                         <mat-error *ngIf="f.costo.errors?.min">
-                            <strong>No puede ser menor que 0</strong>
-                        </mat-error>
-                         <mat-error *ngIf="f.costo.errors?.max">
-                            <strong>No puede ser menor que 100</strong>
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-lg-4 m--margin-bottom-20-mobile">
-                    <mat-form-field class="mat-form-field-fluid">
-                        <input type="number" matInput placeholder="Ingrese el Precio" formControlName="precio1" #precio1/>
+                        <input type="number" matInput placeholder="Ingrese el Precio" formControlName="pvp" #pvp/>
                         <span matSuffix>$</span>
-                        <mat-hint align="start">Por favor ingrese el
-                            <strong>precio 1. &nbsp;<label style="color: #ff4800" *ngIf="valorPrecio1">${{valorPrecio1}}</label></strong>
-                        </mat-hint>
-                        <mat-error *ngIf="f.precio1.errors?.required">
+                       
+                        <mat-error *ngIf="f.pvp.errors?.required">
                             <strong>El precio 1 es requerido</strong>
                         </mat-error>
-                         <mat-error *ngIf="f.precio1.errors?.min">
+                         <mat-error *ngIf="f.pvp.errors?.min">
                             <strong>No puede ser menor que 1</strong>
                         </mat-error>
-                         <mat-error *ngIf="f.precio1.errors?.max">
+                         <mat-error *ngIf="f.pvp.errors?.max">
                             <strong>No puede ser mayor que 100</strong>
                         </mat-error>
                     </mat-form-field>
                 </div>
-            </div>
-            <!-- <div class="m-separator m-separator--dashed"></div>
-            <div class="form-group m-form__group row">
+
                 <div class="col-lg-3 m--margin-bottom-20-mobile">
                     <mat-form-field class="mat-form-field-fluid">
-                        <input type="number" matInput placeholder="Ingrese el Precio 2" formControlName="precio2" #precio2 />
-                        <span matSuffix>%</span>
-                        <mat-hint align="start">Por favor ingrese el
-                            <strong>precio 2. &nbsp;<label style="color: #FF0000" *ngIf="valorPrecio2">${{valorPrecio2}}</label></strong>
-                        </mat-hint>
-                        <mat-error *ngIf="f.precio2.errors?.required">
-                            <strong>El precio 2 es requerido</strong>
-                        </mat-error>
-                         <mat-error *ngIf="f.precio2.errors?.min">
-                            <strong>No puede ser menor que 1</strong>
-                        </mat-error>
-                         <mat-error *ngIf="f.precio2.errors?.max">
-                            <strong>No puede ser mayor que 100</strong>
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-lg-3 m--margin-bottom-20-mobile">
-                    <mat-form-field class="mat-form-field-fluid">
-                        <input type="number" matInput placeholder="Ingrese el Precio 3" formControlName="precio3" #precio3/>
-                        <span matSuffix>%&nbsp; </span>
-                        <mat-hint align="start">Por favor ingrese el
-                            <strong>precio 3. &nbsp;<label style="color: #FF0000" *ngIf="valorPrecio3">${{valorPrecio3}}</label></strong>
-                        </mat-hint>
-                        <mat-error *ngIf="f.precio3.errors?.required">
-                            <strong>El precio 3 es requerido</strong>
-                        </mat-error>
-                         <mat-error *ngIf="f.precio3.errors?.min">
-                            <strong>No puede ser menor que 1</strong>
-                        </mat-error>
-                         <mat-error *ngIf="f.precio3.errors?.max">
-                            <strong>No puede ser mayor que 100</strong>
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-lg-3 m--margin-bottom-20-mobile">
-                    <mat-form-field class="mat-form-field-fluid">
-                        <mat-select placeholder="Ingrese el precio a facturar" formControlName="preciofacturar">
-                            <mat-option [value]="p.id" *ngFor="let p of precios;">Precio {{p.id}}</mat-option>
+                        <mat-select placeholder="Ingrese el IVA" formControlName="iva">
+                            <mat-option [value]=1>Sí</mat-option>
+                            <mat-option [value]=0>No</mat-option>
                         </mat-select>
                         <mat-error>
-                            <strong>El Precio a facturar es requerido</strong>
+                            <strong>El IVA es requerido</strong>
                         </mat-error>
                         <mat-hint align="start">Por favor ingrese el
-                            <strong>precio a facturar</strong>
+                            <strong>IVA</strong>
                         </mat-hint>
                     </mat-form-field>
                 </div>
-                <div class="col-lg-3 m--margin-bottom-20-mobile">
-                    <mat-form-field class="mat-form-field-fluid">
-                        <mat-select placeholder="Ingrese el precio de mercado libre" formControlName="preciomercadolibre">
-                            <mat-option [value]="p.id" *ngFor="let p of precios;">Precio {{p.id}}</mat-option>
-                        </mat-select>
-                        <mat-error>El precio de mercado libre es
-                            <strong>requerido</strong>
-                        </mat-error>
-                        <mat-hint align="start">Por favor ingrese el
-                            <strong>precio de mercado libre</strong>
-                        </mat-hint>
-                    </mat-form-field>
-                </div>
+              
             </div>
 
             <div class="m-separator m-separator--dashed"></div>
             <div class="form-group m-form__group row">
-                <div class="col-lg-12 m--margin-bottom-20-mobile">
-                    <image-upload [max]="10" [buttonCaption]="'Seleccione las imágenes'" (uploadFinished)="onUploadFinished($event)" [url]="url_imagenes" (removed)="onRemoved($event)" [dropBoxMessage]="'Arrastre las imagenes aquí'"
-                        [uploadedFiles]="producto.imagenes">
-                    </image-upload>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <input type="number" matInput placeholder="Ingrese el stock mínimo" formControlName="stockMinimo"/>
+                        <mat-hint align="start">Por favor ingrese el
+                            <strong>Stock minímo</strong>
+                        </mat-hint>
+                    </mat-form-field>
                 </div>
-            </div> -->
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <mat-select type="number" placeholder="Ingrese la talla" formControlName="talla">
+                            <mat-option [value]=t.value *ngFor="let t of tallas">{{t.name}}</mat-option>
+                        </mat-select>
+                        <mat-hint align="start">Por favor ingrese la
+                            <strong>talla</strong>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                       <mat-select type="string" placeholder="Ingrese las unidades de medida" formControlName="unidadMedida">
+                            <mat-option [value]=um.value *ngFor="let um of unidades_medida">{{um.name}}</mat-option>
+                        </mat-select>
+                        <mat-hint align="start">Se refiere a cómo se mide el producto 
+                            <strong>Centímetros (Cm), Litros (L), Militros (ML)</strong>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-20-mobile">
+                    <mat-form-field class="mat-form-field-fluid">
+                        <input type="number" matInput placeholder="Cantidad por producto" formControlName="cantidad"/>
+                        <mat-hint align="start">Se refiere a las unidades por producto
+                            <strong>ejemplo: 1 ó 50,</strong>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
 
-
+            
         </div>
         <div class="m-portlet__foot m-portlet__no-border m-portlet__foot--fit">
             <div class="m-form__actions m-form__actions--solid">

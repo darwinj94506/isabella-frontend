@@ -93,7 +93,7 @@ export class ImportacionEditarComponent implements OnInit {
 	createForm() {
 		this.importacionForm = this.importacionFB.group({
 			fecha: [this.importacion.fecha, Validators.required],
-			numerodocumento:[this.importacion.numerodocumento,Validators.compose([Validators.required,Validators.maxLength(50)])],
+			numerofactura:[this.importacion.numerofactura,Validators.compose([Validators.required,Validators.maxLength(50)])],
 			descripcion:[this.importacion.descripcion,Validators.maxLength(255)]
 		});
 
@@ -158,7 +158,7 @@ export class ImportacionEditarComponent implements OnInit {
 		_importacion.idimportacion = this.importacion.idimportacion;
 		_importacion.fecha = controls['fecha'].value;
 		_importacion.descripcion = controls['descripcion'].value;
-		_importacion.numerodocumento = controls['numerodocumento'].value;
+		_importacion.numerofactura = controls['numerofactura'].value;
 		//valores de la interfaz
 		_importacion.idusuario = 1;
 		this.productosListState.prepareState();

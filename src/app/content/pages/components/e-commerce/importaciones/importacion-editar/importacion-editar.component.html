@@ -55,14 +55,14 @@
 									<div class="col-md-6 m--margin-bottom-10-mobile">
 										
 										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Número de documento" formControlName="numerodocumento" />
+											<input matInput placeholder="Número de documento" formControlName="numerofactura" />
 											<mat-hint align="start">Por favor ingrese la
 												<strong>factura o liquidación</strong>
 											</mat-hint>
-											<mat-error *ngIf="f.numerodocumento.errors?.required">
+											<mat-error *ngIf="f.numerofactura.errors?.required">
 												<strong>Los nombres son requeridos</strong>
 											</mat-error>
-											<mat-error *ngIf="f.numerodocumento.errors?.maxlength">
+											<mat-error *ngIf="f.numerofactura.errors?.maxlength">
 												<strong>Máximo 50 caracteres</strong>
 											</mat-error>
 										</mat-form-field>

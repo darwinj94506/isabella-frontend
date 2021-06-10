@@ -1,17 +1,14 @@
 import { Component, OnInit,EventEmitter, Input, Output } from '@angular/core';
-// import { MatTableDataSource } from '@angular/material';
 import{EgresoService} from '../egreso.service';
 import {FormBuilder, Validators, FormGroup } from "@angular/forms";
 import { UsuarioService } from '../../components/e-commerce/_core/services/usuario.service';
 import { Router } from '@angular/router';
 import{ModalAlertaComponent} from './../modal-alerta/modal-alerta.component';
-import { LayoutUtilsService, MessageType } from '../../components/e-commerce/_core/utils/layout-utils.service';
+import { LayoutUtilsService } from '../../components/e-commerce/_core/utils/layout-utils.service';
 import {MatDialog} from '@angular/material';
 import{ProductoService} from '../../components/e-commerce/_core/services/producto.service';
-import{MercadoLibreService} from '../../components/e-commerce/_core/services/mercado-libre.service';
 import{ModalVerDetalleComponent} from './../modal-ver-detalle/modal-ver-detalle.component';
 import { Observable, BehaviorSubject, from } from 'rxjs';
-import { Subject } from 'rxjs';
 import { formatDate } from '@angular/common';
 
 @Component({
@@ -44,7 +41,6 @@ export class CrudEgresoComponent implements OnInit  {
   private router: Router,
   public dialog: MatDialog,
   private layoutUtilsService: LayoutUtilsService,
-  private _mec:MercadoLibreService,
   private productoService:ProductoService,
   private fb: FormBuilder){
     this.loading$ = this.loadingSubject.asObservable();
@@ -56,9 +52,9 @@ export class CrudEgresoComponent implements OnInit  {
 
    //redondea un numero decimal a dos cifras decimales ejemplo: round(1234.5678, 2); // 1234.57
    round(number, precision) {
-    var factor = Math.pow(10, precision);
-    var tempNumber = number * factor;
-    var roundedTempNumber = Math.round(tempNumber);
+    let factor = Math.pow(10, precision);
+    let tempNumber = number * factor;
+    let roundedTempNumber = Math.round(tempNumber);
     return roundedTempNumber / factor;
   };
 
@@ -219,7 +215,7 @@ abrirModal(data=null){
       opcion:1,
       nombresSolicitante:[{value:'',disabled:true},Validators.required]
     })
-    console.log({...this.myForm.value});
+    // console.log({...this.myForm.value});
     // console.log(this.myForm.get('total').value)
   }
   get idsolicitante() { return this.myForm.get('idsolicitante'); }
@@ -231,10 +227,13 @@ abrirModal(data=null){
 
 //esto viene del componente detalle cada vez que se agrega un producto
   recibirProductos(productos){
-    console.log(productos);
-    let iva : number = this.round(productos.totalConIva - productos.totalSinIva,2);
-    let subTotal : number = this.round(productos.totalSinIva,2);
-    this.myForm.patchValue({total:productos.totalConIva,subTotal:subTotal, iva})
+    // console.log(productos);
+    let total = this.round(productos.totalConIva,2);
+    let st = this.round(total/1.12,4);
+    let subTotal : number = this.round(st,2);
+    // console.log([total, st, subTotal])
+    let iva : number = this.round(total-subTotal,2);
+    this.myForm.patchValue({total,subTotal, iva})
     this.itemsProductos=productos.productos;
   }
   

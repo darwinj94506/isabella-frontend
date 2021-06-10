@@ -17,12 +17,12 @@ import{ModalVerDetalleComponent} from './../modal-ver-detalle/modal-ver-detalle.
   styles: ['.rojo { color:red; }']
 })
 export class DetalleComponent implements OnInit,AfterViewInit {
-  displayedColumns = ['posicion','descripcion', 'cantidad', 'precioSinIva' ,'precio', 'totalSinIva','total', 'actions'];
+  displayedColumns = ['posicion','descripcion', 'cantidad' ,'precio','total', 'actions'];
   codigofabricante = new FormControl('', Validators.required);
   @Output() OutputProductos=new EventEmitter();
   @ViewChild('searchInput') searchInput: ElementRef;
   noExisteProducto:boolean=false;
- ELEMENT_DATA: Element[] = [
+ ELEMENT_DATA: FilaFactura[] = [
 ];
 
 //se utiliza para guardar las respuestas cuando se hace una peticion con concatmap para obtener el stock de los productos guardados
@@ -56,18 +56,13 @@ dataSource = new MatTableDataSource(this.ELEMENT_DATA);
                  descripcion:producto.descripcion,
                  idegreso: null,
                  idproducto:producto.idproducto,
-                 costo:producto.costo,
-                 precio:  Number.parseFloat(producto.precio1),
+                 pvp:  Number.parseFloat(producto.pvp),
                  cantidad:1,
                  opcion:1,
-                 precio1: Number.parseFloat(producto.precio1),
-                 precio2: 0,
-                 precio3: 0,
-                 preciomec: 1,
-                 preciofacturar:this.redondear(Number.parseFloat(producto.preciofacturar)),
-                 total: Number.parseFloat(producto.precio1),
-                 precioSinIva: this.round(this.calcularTotalSinIva(Number.parseFloat(producto.precio1), producto.iva),2),
-                 totalSinIva: this.round(this.calcularTotalSinIva(Number.parseFloat(producto.precio1), producto.iva),2),
+                //  preciofacturar:this.redondear(Number.parseFloat(producto.preciofacturar)),
+                 total: Number.parseFloat(producto.pvp),
+                 precioSinIva: this.round(this.calcularTotalSinIva(Number.parseFloat(producto.pvp), producto.iva),2),
+                 totalSinIva: this.round(this.calcularTotalSinIva(Number.parseFloat(producto.pvp), producto.iva),2),
                  codigofabricante:producto.codigofabricante,
                  iva: producto.iva
                 });
@@ -112,19 +107,17 @@ dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   }
   productos:any[]=[];
   //validar cantiades en blanco o que esten en cero
-
   //calcula el total cuando se cambia el precio y cuando se cambia la cantidad, i es del indice del registro en la tabla, op indica si el evento viene del select o del input
   calcularTotal($event,i: number,op){
     console.log($event);
     if($event){
       if(op==1){ //cuando cambio la cantidad
-        this.ELEMENT_DATA[i].total = this.round($event*this.ELEMENT_DATA[i].precio,2);
-        this.ELEMENT_DATA[i].totalSinIva = this.round($event*this.ELEMENT_DATA[i].precioSinIva,2);
+        this.ELEMENT_DATA[i].total = this.round($event*this.ELEMENT_DATA[i].pvp,2);
       }else{ //cuando cambio el precio
         let cant = this.ELEMENT_DATA[i].cantidad;
-        this.ELEMENT_DATA[i].precio = $event;
+        this.ELEMENT_DATA[i].pvp = $event;
         this.ELEMENT_DATA[i].precioSinIva = this.round(this.calcularTotalSinIva($event,this.ELEMENT_DATA[i].iva),2);
-        this.ELEMENT_DATA[i].total = cant*this.ELEMENT_DATA[i].precio;
+        this.ELEMENT_DATA[i].total = cant*this.ELEMENT_DATA[i].pvp;
         this.ELEMENT_DATA[i].totalSinIva = this.round(cant*this.ELEMENT_DATA[i].precioSinIva,2);
       }
       this.dataSource.data=this.ELEMENT_DATA;
@@ -178,25 +171,18 @@ dataSource = new MatTableDataSource(this.ELEMENT_DATA);
     return Number.parseFloat(num.toFixed(2))
   }
 }
-export interface Element{
-  posicion:any,
-  iddetalle:any
-  idegreso:any,
-  idproducto:null,
-  costo:number,
-  precio:number,
-  cantidad:number,
-  opcion:any,
-  descripcion:any,
-  precio1:number,
-  precio2:number,
-  precio3:number,
-  preciomec:any,
-  preciofacturar:number,
-  total:number,
-  totalSinIva:number,
+export interface FilaFactura{
+  posicion:number,
+  iddetalle:string,
+  idegreso:number,
+  idproducto:number,
+  pvp:number,
   precioSinIva:number,
-  // descripcionfabricante:string,
+  totalSinIva:number,
+  cantidad:number,
+  opcion:number,
+  descripcion:string,
+  total:number,
   codigofabricante:string,
   iva:number
 }

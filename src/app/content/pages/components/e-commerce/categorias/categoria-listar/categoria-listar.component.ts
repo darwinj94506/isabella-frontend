@@ -95,9 +95,9 @@ addCustomer() {
 	/** Edit */
 	editCustomer(categoria: CategoriaModel) {
 		let saveMessageTranslateParam = 'ECOMMERCE.CUSTOMERS.EDIT.';
-		saveMessageTranslateParam += categoria.idtipo > 0 ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
+		saveMessageTranslateParam += categoria.idcategoria > 0 ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
 		const _saveMessage = 'guardado';
-		const _messageType = categoria.idtipo > 0 ? MessageType.Update : MessageType.Create;
+		const _messageType = categoria.idcategoria > 0 ? MessageType.Update : MessageType.Create;
 		const dialogRef = this.dialog.open(CategoriaEditarComponent, { data: { categoria } });
 		dialogRef.afterClosed().subscribe(res => {
 			if (!res) {

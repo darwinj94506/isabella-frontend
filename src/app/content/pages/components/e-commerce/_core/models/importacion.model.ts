@@ -4,7 +4,7 @@ import { ProductoModel } from './producto.model';
 export class ImportacionModel extends BaseModel {
 	idimportacion: number;
 	idusuario:number;
-	numerodocumento:string;
+	numerofactura:string;
 	fecha: Date;
 	descripcion:string;
 	
@@ -14,7 +14,7 @@ export class ImportacionModel extends BaseModel {
 		
         this.fecha=new Date();
 		this.descripcion='';
-		this.numerodocumento='';
+		this.numerofactura='';
 
 	}
 }

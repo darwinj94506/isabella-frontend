@@ -3,6 +3,7 @@ import { IFilter } from './interfaces/filter.interface';
 import { ILog } from './interfaces/log.interface';
 
 export class BaseModel implements IEdit, IFilter, ILog {
+	_estado: number;
 	// Edit
 	_isEditMode: boolean = false;
 	_isNew: boolean = false;
