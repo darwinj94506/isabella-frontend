@@ -5,5 +5,7 @@
 
 export const environment = {
   production: false,
-  isMockEnabled: true // You have to switch this, when your real back-end is done
+  isMockEnabled: true, // You have to switch this, when your real back-end is done,
+  URL_GLOBAL : 'http://localhost:3002/api/'
 };
+// C:\Users\DARWIN\Documents\isabella\inventarioApp\isabella-backend\bin\daemon\isabellaappdaemon.out.log

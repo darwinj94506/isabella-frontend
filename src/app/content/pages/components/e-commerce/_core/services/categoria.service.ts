@@ -7,7 +7,8 @@ import { HttpUtilsService } from '../utils/http-utils.service';
 import { CategoriaModel, MarcaModel, ClasificacionModel, PresentacionModel } from '../models';
 import { QueryParamsModel } from '../models/query-models/query-params.model';
 import { QueryResultsModel } from '../models/query-models/query-results.model';
-import{URL_GLOBAL}  from '../global';
+import { environment } from '../../../../../../../environments/environment';
+const URL_GLOBAL = environment.URL_GLOBAL; 
 
 @Injectable({
   providedIn: 'root'

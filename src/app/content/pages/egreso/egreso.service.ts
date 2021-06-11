@@ -3,12 +3,13 @@ import{Http,Headers,} from '@angular/http';
 import { HttpClient } from '@angular/common/http';
 // import 'rxjs/add/operator/map';
 import {map} from 'rxjs/operators'; 
-import{URL_GLOBAL} from '../components/e-commerce/_core/global';
+// import{URL_GLOBAL} from '../components/e-commerce/_core/global';
+import { environment } from '../../../../environments/environment';
 import { Observable, from } from 'rxjs';
 import { concatMap, delay, mergeMap } from 'rxjs/operators';
 import { HttpUtilsService } from '../components/e-commerce/_core/utils/http-utils.service';
 
-
+const URL_API = environment.URL_GLOBAL;
 
 @Injectable()
 export class EgresoService{
@@ -17,17 +18,16 @@ export class EgresoService{
   public token;
 
   constructor(private _http:Http,private http: HttpClient,private httpUtils: HttpUtilsService){
-    this.url=URL_GLOBAL;
     }
     getDetalleEgreso(idegreso){
-      return this._http.get(this.url+'getDetalleEgreso/'+idegreso).pipe(map(res=>res.json()));      
+      return this._http.get(URL_API+'getDetalleEgreso/'+idegreso).pipe(map(res=>res.json()));      
     }
     
     getStock(idmaterial){
-      return this._http.get(this.url+'getStock/'+idmaterial).pipe(map(res=>res.json()));
+      return this._http.get(URL_API+'getStock/'+idmaterial).pipe(map(res=>res.json()));
     }
     getDetalles(idegreso){
-      return this._http.get(this.url+'getDetalles/'+idegreso).pipe(map(res=>res.json()));
+      return this._http.get(URL_API+'getDetalles/'+idegreso).pipe(map(res=>res.json()));
     }
   
     getIdentity(){
@@ -42,20 +42,20 @@ export class EgresoService{
     getPaginarIngresos(parametros){
       let params=JSON.stringify(parametros);
       let headers=new Headers({'Content-Type':'application/json'});
-      return this._http.post(this.url+'getIngresos',params, {headers:headers})
+      return this._http.post( URL_API +'getIngresos',params, {headers:headers})
       .pipe(map( res => res.json()));          
     }
     getPaginarEgresos(parametros){
       let params=JSON.stringify(parametros);
       let headers=new Headers({'Content-Type':'application/json'});
-      return this._http.post(this.url+'getEgresosPaginacion',params, {headers:headers})
+      return this._http.post( URL_API +'getEgresosPaginacion',params, {headers:headers})
       .pipe(map( res => res.json()));          
     }
 
     validarDetalle(cuerpo){
       let params=JSON.stringify(cuerpo);
       let headers=new Headers({'Content-Type':'application/json'});
-      return this._http.post(this.url+'validarDetalle',params, {headers:headers})
+      return this._http.post( URL_API +'validarDetalle',params, {headers:headers})
       .pipe(map( res => res.json()));          
     }
 
@@ -63,7 +63,7 @@ export class EgresoService{
       console.log(egreso);
       let params=JSON.stringify(egreso);
       let headers=new Headers({'Content-Type':'application/json','Authorization':this.getToken()});
-      return this._http.post(this.url+'crudEgreso',params, {headers:headers})
+      return this._http.post(URL_API + 'crudEgreso',params, {headers:headers})
                         .pipe(map( res => res.json()));               
     }
 
@@ -76,14 +76,14 @@ export class EgresoService{
       const httpHeaders = this.httpUtils.getHTTPHeaders();
       console.log(detalle);
       //
-      return from(detalle).pipe(concatMap(det=>this.http.post<any>(URL_GLOBAL+'crudDetalle',{...det},{ headers: httpHeaders})))
+      return from(detalle).pipe(concatMap(det=>this.http.post<any>(URL_API +'crudDetalle',{...det},{ headers: httpHeaders})))
     }
   
   
     getTotalEgreso() {
     // router.post('/api/getTotalTipos', db.getTotalTipos); 
       let headers=new Headers({'Content-Type':'application/json'});
-      return this._http.post(this.url+'getTotalEgresos', {headers:headers})
+      return this._http.post(URL_API + 'getTotalEgresos', {headers:headers})
                         .pipe(map( res => res.json()));
     }
     
